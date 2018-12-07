@@ -1,4 +1,25 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@File    :   pathHelper.py
+@Time    :   2018/12/17
+@Author  :   Yaron Huang 
+@Version :   1.0
+@Contact :   yaronhuang@qq.com
+@Desc    :   
+'''
+
 import os
+
+def getDiffTmpPathName(basePath):
+    count = 0
+    basePath = basePath.strip()
+    basePath = basePath.rstrip("\\")
+    path = basePath + '\\Tmp' + str(count)
+    while os.path.exists(path):
+        count = count + 1
+        path = basePath + '\\Tmp' + str(count)
+    return path
 
 def mkdirs(path):
     path = path.strip()
@@ -14,7 +35,6 @@ def replaceLimitChar(path, newChar):
     if newChar is None:
         newChar = ''
     path = path.replace(':', newChar)
-    path = path.replace('：', newChar)
     path = path.replace('/', newChar)
     path = path.replace('?', newChar)
     path = path.replace('<', newChar)

@@ -1,37 +1,115 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@File    :   ffmpegHelper.py
+@Time    :   2018/12/17
+@Author  :   Yaron Huang 
+@Version :   1.0
+@Contact :   yaronhuang@qq.com
+@Desc    :   
+'''
+
 import subprocess
 import os
+import re
+import pathHelper
+import netHelper
+import threadHelper
 
-def mergerByM3u8(url, filepath, showshell=False):
-    try:
-        cmd = "ffmpeg -safe 0 -i " + url + " -c copy -bsf:a aac_adtstoasc \"" + filepath + "\""
-        if showshell:
-            res = subprocess.call(cmd, shell=True)
-        else:
-            res = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if res != 0:
+class FFmpegTool(object):
+    def __init__(self, threadNum=50):
+        self.thread        = threadHelper.ThreadTool(threadNum)
+        self.waitCount     = 0
+        self.completeCount = 0
+        return
+    
+    def __thradfunc_dl(self, url, filepath, retrycount, finishcall=None):
+        check = False
+        try:
+            while retrycount > 0:
+                retrycount = retrycount - 1
+                check = netHelper.downloadFile(url, filepath)
+                if check:
+                    break
+        except:
+            pass
+        self.completeCount = self.completeCount + 1
+        if(finishcall):
+            paraList = {'allcount': self.waitCount, 'completecount': self.completeCount, 'return': check }
+            finishcall(paraList)
+        return
+
+    
+    def __parseM3u8(self, url):
+        content = netHelper.downloadString(url, None)
+        pattern = re.compile(r"(?<=http).+?(?=\\n)")
+        plist = pattern.findall(str(content))
+        urllist = []
+        for item in plist:
+            urllist.append("http"+item)
+        return urllist
+
+    def mergerByM3u8_Multithreading(self, url, filepath, progressCall=None, showshell=False):
+        try:
+            # Get urllist
+            urllist = self.__parseM3u8(url)
+            if len(urllist) <= 0:
+                return False
+
+            # Creat tmpdir
+            path = pathHelper.getDirName(filepath)
+            tmpPath = pathHelper.getDiffTmpPathName(path)
+            if pathHelper.mkdirs(tmpPath) == False:
+                return False
+            
+            # Download files
+            index              = 0
+            allpath            = []
+            self.waitCount     = len(urllist)
+            self.completeCount = 0
+            for item in urllist:
+                index = index + 1
+                path = tmpPath + '\\' + str(index) + ".mp4"
+                allpath.append(path)
+                if os.path.exists(path):
+                    os.remove(path)
+                self.thread.start(self.__thradfunc_dl, item, path, 3, progressCall)
+            self.thread.waitAll()
+            return self.mergerByFiles(allpath, filepath, showshell)
+        except:
             return False
-        return True
-    except:
-        return False
 
-def mergerByFiles(srcfilepaths, filepath, showshell=False):
-    result = True
-    tmpfile = filepath + "TMP.txt"
-    try:
-        with open(tmpfile, 'w') as fd:
-            for item in srcfilepaths:
-                fd.write('file \'' + item + '\'\n')
+    def mergerByM3u8(self, url, filepath, showshell=False):
+        try:
+            cmd = "ffmpeg -safe 0 -i " + url + " -c copy -bsf:a aac_adtstoasc \"" + filepath + "\""
+            if showshell:
+                res = subprocess.call(cmd, shell=True)
+            else:
+                res = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if res != 0:
+                return False
+            return True
+        except:
+            return False
 
-        cmd = "ffmpeg -f concat -safe 0 -i \"" + tmpfile + "\" -c copy \"" + filepath + "\""
-        if showshell:
-            res = subprocess.call(cmd, shell=True)
-        else:
-            res = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if res != 0:
+    def mergerByFiles(self, srcfilepaths, filepath, showshell=False):
+        result = True
+        tmpfile = filepath + "TMP.txt"
+        try:
+            with open(tmpfile, 'w') as fd:
+                for item in srcfilepaths:
+                    fd.write('file \'' + item + '\'\n')
+
+            cmd = "ffmpeg -f concat -safe 0 -i \"" + tmpfile + "\" -c copy \"" + filepath + "\""
+            if showshell:
+                res = subprocess.call(cmd, shell=True)
+            else:
+                res = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if res != 0:
+                result = False
+        except:
             result = False
-    except:
-        result = False
 
-    if os.access(tmpfile,0):
-        os.remove(tmpfile)
-    return result
+        if os.access(tmpfile,0):
+            os.remove(tmpfile)
+        return result
