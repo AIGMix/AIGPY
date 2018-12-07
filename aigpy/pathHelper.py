@@ -14,7 +14,6 @@ def replaceLimitChar(path, newChar):
     if newChar is None:
         newChar = ''
     path = path.replace(':', newChar)
-    path = path.replace('：', newChar)
     path = path.replace('/', newChar)
     path = path.replace('?', newChar)
     path = path.replace('<', newChar)
