@@ -12,10 +12,11 @@
 import subprocess
 import os
 import re
-import pathHelper
-import netHelper
-import threadHelper
 import shutil
+
+import aigpy.netHelper as netHelper
+import aigpy.pathHelper as pathHelper
+import aigpy.threadHelper as threadHelper
 
 class FFmpegTool(object):
     def __init__(self, threadNum=50):
@@ -78,6 +79,7 @@ class FFmpegTool(object):
             self.thread.waitAll()
             self.mergerByFiles(allpath, filepath, showshell)
             shutil.rmtree(tmpPath)
+            return True
         except:
             return False
 

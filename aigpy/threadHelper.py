@@ -37,7 +37,9 @@ class ThreadTool(object):
         return handle.result()
 
     def waitAll(self):
-        wait(self.allTask, return_when=ALL_COMPLETED)
+        for future in as_completed(self.allTask):
+            data = future.result()
+        # wait(self.allTask, return_when=ALL_COMPLETED)
 
     def waitAnyone(self):
         as_completed(self.allTask)
