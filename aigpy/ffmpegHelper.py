@@ -15,6 +15,7 @@ import re
 import pathHelper
 import netHelper
 import threadHelper
+import shutil
 
 class FFmpegTool(object):
     def __init__(self, threadNum=50):
@@ -75,7 +76,8 @@ class FFmpegTool(object):
                     os.remove(path)
                 self.thread.start(self.__thradfunc_dl, item, path, 3, progressCall)
             self.thread.waitAll()
-            return self.mergerByFiles(allpath, filepath, showshell)
+            self.mergerByFiles(allpath, filepath, showshell)
+            shutil.rmtree(tmpPath)
         except:
             return False
 
