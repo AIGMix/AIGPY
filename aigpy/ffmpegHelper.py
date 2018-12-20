@@ -9,10 +9,11 @@
 @Desc    :   
 '''
 
-import subprocess
 import os
 import re
+import sys
 import shutil
+import subprocess
 
 import aigpy.netHelper as netHelper
 import aigpy.pathHelper as pathHelper

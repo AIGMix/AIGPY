@@ -10,6 +10,7 @@
 '''
 
 import os
+import shutil
 
 def getDiffTmpPathName(basePath):
     count = 0
@@ -28,6 +29,18 @@ def mkdirs(path):
         os.makedirs(path)
         return True
     return False
+
+def remove(path):
+    try:
+        if(os.path.exists(path) == False):
+            return True
+        if os.path.isfile(path) == True:
+            os.remove(path)
+        if os.path.isdir(path) == True:
+            shutil.rmtree(path)
+        return True
+    except:
+        return False
 
 def replaceLimitChar(path, newChar):
     if path is None:
