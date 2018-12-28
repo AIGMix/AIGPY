@@ -10,7 +10,6 @@ python setup.py sdist bdist_wheel
 
 REM reinstall aigpy
 pip uninstall -y aigpy
-python setup.py install
 
 REM upload to pip
 twine upload dist/*

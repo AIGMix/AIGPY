@@ -19,14 +19,17 @@ import aigpy.netHelper as netHelper
 import aigpy.pathHelper as pathHelper
 import aigpy.threadHelper as threadHelper
 
+from aigpy.progressHelper import ProgressTool
+
 class FFmpegTool(object):
     def __init__(self, threadNum=50):
         self.thread        = threadHelper.ThreadTool(threadNum)
         self.waitCount     = 0
         self.completeCount = 0
+        self.progress      = None
         return
     
-    def __thradfunc_dl(self, url, filepath, retrycount, finishcall=None):
+    def __thradfunc_dl(self, url, filepath, retrycount):
         check = False
         try:
             while retrycount > 0:
@@ -37,9 +40,7 @@ class FFmpegTool(object):
         except:
             pass
         self.completeCount = self.completeCount + 1
-        if(finishcall):
-            paraList = {'allcount': self.waitCount, 'completecount': self.completeCount, 'return': check }
-            finishcall(paraList)
+        self.progress.step()
         return
 
     
@@ -52,7 +53,7 @@ class FFmpegTool(object):
             urllist.append("http"+item)
         return urllist
 
-    def mergerByM3u8_Multithreading(self, url, filepath, progressCall=None, showshell=False):
+    def mergerByM3u8_Multithreading(self, url, filepath, showprogress=False, showshell=False):
         try:
             # Get urllist
             urllist = self.__parseM3u8(url)
@@ -65,6 +66,11 @@ class FFmpegTool(object):
             if pathHelper.mkdirs(tmpPath) == False:
                 return False
             
+            # Progress
+            self.progress = None
+            if showprogress:
+                self.progress = ProgressTool(len(urllist))
+
             # Download files
             index              = 0
             allpath            = []
@@ -76,7 +82,7 @@ class FFmpegTool(object):
                 allpath.append(path)
                 if os.path.exists(path):
                     os.remove(path)
-                self.thread.start(self.__thradfunc_dl, item, path, 3, progressCall)
+                self.thread.start(self.__thradfunc_dl, item, path, 3)
             self.thread.waitAll()
             self.mergerByFiles(allpath, filepath, showshell)
             shutil.rmtree(tmpPath)

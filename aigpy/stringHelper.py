@@ -48,3 +48,4 @@ def align(string, num, isLeft=True):
         return string + appendStr
     else:
         return appendStr + string
+
