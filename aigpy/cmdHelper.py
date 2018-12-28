@@ -7,3 +7,7 @@ def myinput(desc):
         return input(desc)
     else:
         return raw_input(desc)
+
+
+
+
