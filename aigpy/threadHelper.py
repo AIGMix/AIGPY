@@ -6,7 +6,7 @@
 @Author  :   Yaron Huang 
 @Version :   1.0
 @Contact :   yaronhuang@qq.com
-@Desc    :   
+@Desc    :   Thread Tool 
 '''
 
 from concurrent.futures import ThreadPoolExecutor
@@ -44,3 +44,4 @@ class ThreadTool(object):
     def waitAnyone(self):
         as_completed(self.allTask)
 
+    
