@@ -12,6 +12,7 @@
 import sys
 import requests
 import json
+from socket import *
 
 def downloadString(url, timeout=(3.05, 27)):
     try:
@@ -46,3 +47,14 @@ def downloadFile(url, fileName):
             return True
     except:
         return False
+
+def getIpStatus(host, port, timeout=1):
+    setdefaulttimeout(timeout)
+    flag = True
+    try:
+        s = socket(AF_INET, SOCK_STREAM)
+        s.connect((host, port))
+        s.close()
+    except:
+        flag = False
+    return flag

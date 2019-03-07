@@ -14,17 +14,19 @@ import shutil
 
 def getDiffTmpPathName(basePath):
     count = 0
+    basePath = basePath.replace("\\", "/")
     basePath = basePath.strip()
-    basePath = basePath.rstrip("\\")
-    path = basePath + '\\Tmp' + str(count)
+    basePath = basePath.rstrip("/")
+    path = basePath + '/Tmp' + str(count)
     while os.path.exists(path):
         count = count + 1
-        path = basePath + '\\Tmp' + str(count)
+        path  = basePath + '/Tmp' + str(count)
     return path
 
 def mkdirs(path):
+    path = path.replace("\\", "/")
     path = path.strip()
-    path = path.rstrip("\\")
+    path = path.rstrip("/")
     if not os.path.exists(path):
         os.makedirs(path)
         return True

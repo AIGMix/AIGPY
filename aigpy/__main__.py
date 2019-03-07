@@ -1,9 +1,12 @@
+import socks
+import requests
 import sys
 import time
 
 sys.path.append('./')
 import aigpy.zipHelper as zipHelper
 from aigpy.updateHelper import updateTool
+import aigpy.ffmpegHelper as ffmpegHelper
 
 if __name__ == '__main__':
     plist = []
