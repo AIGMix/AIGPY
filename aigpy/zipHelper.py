@@ -78,7 +78,6 @@ def zip(para, zipName):
                 fpath = fpath and fpath + os.sep or ''
                 for filename in filenames:
                     pZip._write(pZip, ptype, os.path.join(dirpath, filename), fpath +filename)
-
         pZip.close()
         return True
     except:

@@ -88,4 +88,13 @@ def getFileExtension(filepath):
         return
     return filepath[index:len(filepath)]
 
-
+def getDirSize(path):
+    try:
+        if os.path.isdir(path) == False:
+            return 0
+        size = 0
+        for root, dirs, files in os.walk(dir):
+            size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
+        return size
+    except:
+        return 0
