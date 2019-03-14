@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@File    :   stringHelper.py
+@Time    :   2019/03/11
+@Author  :   Yaron Huang 
+@Version :   1.0
+@Contact :   yaronhuang@qq.com
+@Desc    :   
+'''
+
+
 """
 #Func    :   判断字符串是否单纯为中文
 #Param   :   word               字符串

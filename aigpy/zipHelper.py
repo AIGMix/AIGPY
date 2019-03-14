@@ -61,6 +61,12 @@ def _write(pZip, ptype, pfilename, parcname):
     except:
         return False
 
+"""
+#Func    :   zip files or dir
+#Param   :   para      file | file[] | dir
+#Param   :   zipName   outPathName
+#Return  :   True/False 
+"""
 def zip(para, zipName):
     check = _getParaType(para)
     ptype = _getZipType(zipName)

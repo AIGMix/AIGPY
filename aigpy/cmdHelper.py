@@ -19,6 +19,22 @@ def myinput(desc):
     else:
         return raw_input(desc)
 
+def myinputInt(desc, default):
+    try:
+        str = myinput(desc)
+        ret = int(str)
+        return ret
+    except:
+        return default
+
+def myinputFloat(desc, default):
+    try:
+        str = myinput(desc)
+        ret = float(str)
+        return ret
+    except:
+        return default
+
 def findInArgv(str):
     if sys.argv == None or len(sys.argv) == 0:
         return None

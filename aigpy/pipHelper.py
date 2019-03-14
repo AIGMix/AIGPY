@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@File    :   pipHelper.py
+@Time    :   2019/03/11
+@Author  :   Yaron Huang 
+@Version :   1.0
+@Contact :   yaronhuang@qq.com
+@Desc    :   pip server tool
+'''
+
 import aigpy.netHelper as netHelper
 
 def getInfo(projectName):
