@@ -61,13 +61,14 @@ def _write(pZip, ptype, pfilename, parcname):
     except:
         return False
 
-"""
-#Func    :   zip files or dir
-#Param   :   para      file | file[] | dir
-#Param   :   zipName   outPathName
-#Return  :   True/False 
-"""
+
 def zip(para, zipName):
+    """
+    #Func    :   zip files or dir       
+    #Param   :   para      file | file[] | dir      
+    #Param   :   zipName   outPathName      
+    #Return  :   True/False         
+    """
     check = _getParaType(para)
     ptype = _getZipType(zipName)
     try: 
@@ -90,6 +91,12 @@ def zip(para, zipName):
         return False
 
 def unzip(zipName, outPath):
+    """
+    #Func    :   解压缩     
+    #Param   :   zipName [in]  压缩包名字       
+    #Param   :   outPath [in]  输出目录            
+    #Return  :   True/False 
+    """
     ptype = _getZipType(zipName)
     try:
         pZip = _open(zipName, ptype, 'r')

@@ -161,3 +161,61 @@ def myprint(desc,textColor=None,backgroundColor=None):
                 color = color + str(backgroundColor.value)
             color = color + 'm'
             sys.stdout.write("\033[" + color + str(desc) + "\033[0m")
+
+def showTable(columns, rows, colsColor=None, rowsColor=None):
+    """
+    #Func    :   显示表格       
+    #Param   :   columns    [in] 列名数组       
+    #Param   :   rows       [in] 行值数组-二维数组             
+    #Param   :   colsColor  [in] 列名颜色                  
+    #Param   :   rowsColor  [in] 行颜色                       
+    #Return  :   True/False 
+    """
+    try:
+        numCol = len(columns)
+        numRow = len(rows)
+        widths = []
+        for item in columns:
+            name = str(item)   
+            widths.append(len(name))
+        
+        for rObj in rows:
+            index = 0
+            for item in rObj:
+                if len(item) > widths[index]:
+                    widths[index] = len(item)
+                index = index + 1
+                if len(widths) <= index:
+                    break
+        
+        boardstr = '-'
+        for item in widths:
+            for i in range(item + 2 + 1):
+                boardstr = boardstr + '-'
+
+        print(boardstr)
+        index = 0
+        for item in columns:
+            item = item.center(widths[index] + 2)
+            print('|', end='')
+            myprint(item, colsColor)
+            index = index + 1
+            if len(widths) <= index:
+                break
+        print('|')
+        print(boardstr)
+        for rObj in rows:
+            index = 0
+            for item in rObj:
+                item = item.center(widths[index] + 2)
+                print('|',end='')
+                myprint(item, rowsColor)
+                index = index + 1
+                if len(widths) <= index:
+                    break
+            print('|')
+        print(boardstr)
+        return True
+    except:
+        return False
+

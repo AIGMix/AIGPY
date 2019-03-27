@@ -19,7 +19,7 @@ class ProgressTool(object):
         self.maxCount  = maxCount           #最大数量
         self.barLength = barLength          #进度条长度
         self.icon      = icon               #进度符号
-        self.mutex     = threading.Lock()    #互斥锁
+        self.mutex     = threading.Lock()   #互斥锁
 
     def reset(self, maxCount):
         if self.mutex.acquire():

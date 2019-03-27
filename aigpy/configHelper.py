@@ -12,6 +12,12 @@ import os
 import configparser
 
 def Count(fileName, section=None):
+    """
+    #Func    :   获取文件中参数的数量       
+    #Param   :   fileName [in]  文件名          
+    #Param   :   section  [in]  组名                  
+    #Return  :   int型
+    """
     try:
         ret = 0
         cf  = configparser.ConfigParser()
@@ -29,6 +35,11 @@ def Count(fileName, section=None):
         return 0
 
 def Sections(fileName):
+    """
+    #Func    :   获取文件中小组列表句柄           
+    #Param   :   fileName [in] 文件名       
+    #Return  :   Err:None        
+    """
     try:
         cf = configparser.ConfigParser()
         cf.read(fileName)
@@ -37,6 +48,13 @@ def Sections(fileName):
         return None
 
 def GetValue(section, key, default, fileName):
+    """
+    #Func    :   获取参数值          
+    #Param   :   section    [in] 小组名     
+    #Param   :   key        [in] 参数名     
+    #Param   :   default    [in] 默认值     
+    #Param   :   fileName   [in] 文件名     
+    """
     try:
         cf = configparser.ConfigParser()
         cf.read(fileName)
@@ -52,6 +70,14 @@ def GetValue(section, key, default, fileName):
         return default
 
 def SetValue(section, key, value, fileName):
+    """
+    #Func    :   设置值             
+    #Param   :   section    [in] 小组名     
+    #Param   :   key        [in] 参数名     
+    #Param   :   value      [in] 参数值      
+    #Param   :   fileName   [in] 文件名 
+    #Return  :   True/False 
+    """
     try:
         if os.access(fileName, 0) == False:
             fp = open(fileName, "w")

@@ -17,14 +17,19 @@ def getInfo(projectName):
     return ret
     
 def getLastVersion(projectName):
-    ret = getInfo(projectName)
-    if ret == None:
+    try:
+        ret = getInfo(projectName)
+        if ret == None:
+            return None
+        return ret['info']['version']
+    except:
         return None
-    return ret['info']['version']
 
 def getVersionList(projectName):
-    ret = getInfo(projectName)
-    if ret == None:
+    try:
+        ret = getInfo(projectName)
+        if ret == None:
+            return None
+        return ret['releases']
+    except:
         return None
-    return ret['releases']
-

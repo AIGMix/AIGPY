@@ -47,13 +47,21 @@ class FFmpegTool(object):
     def __parseM3u8(self, url):
         content = netHelper.downloadString(url, None)
         pattern = re.compile(r"(?<=http).+?(?=\\n)")
-        plist = pattern.findall(str(content))
+        plist   = pattern.findall(str(content))
         urllist = []
         for item in plist:
             urllist.append("http"+item)
         return urllist
 
     def mergerByM3u8_Multithreading(self, url, filepath, showprogress=False, showshell=False):
+        """
+        #Func    :   多线程下载并合并文件(使用M3u8的url)        
+        #Param   :   url             [in] 链接
+        #Param   :   filepath        [in] 目标文件名
+        #Param   :   showprogress    [in] 是否显示进度条
+        #Param   :   showshell       [in] 是否显示cmd信息
+        #Return  :   True/False
+        """
         try:
             # Get urllist
             urllist = self.__parseM3u8(url)
@@ -61,7 +69,7 @@ class FFmpegTool(object):
                 return False
 
             # Creat tmpdir
-            path = pathHelper.getDirName(filepath)
+            path    = pathHelper.getDirName(filepath)
             tmpPath = pathHelper.getDiffTmpPathName(path)
             if pathHelper.mkdirs(tmpPath) == False:
                 return False
@@ -91,39 +99,51 @@ class FFmpegTool(object):
             return False
 
     def mergerByM3u8(self, url, filepath, showshell=False):
+        """
+        #Func    :   合并文件(使用M3u8的url)        
+        #Param   :   url         [in] 链接       
+        #Param   :   filepath    [in] 目标文件名            
+        #Param   :   showshell   [in] 是否显示cmd信息              
+        #Return  :   True/False 
+        """
+        res = -1
         try:
             cmd = "ffmpeg -safe 0 -i " + url + " -c copy -bsf:a aac_adtstoasc \"" + filepath + "\""
             if showshell:
                 res = subprocess.call(cmd, shell=True)
             else:
                 res = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if res != 0:
-                return False
-            return True
         except:
-            return False
+            pass
+        return res == 0
 
     def mergerByFiles(self, srcfilepaths, filepath, showshell=False):
-        result = True
+        """
+        #Func    :   合并文件       
+        #Param   :   srcfilepaths   [in] 文件名数组     
+        #Param   :   filepath       [in] 目标文件名     
+        #Param   :   showshell      [in] 是否显示cmd信息        
+        #Return  :   True/False 
+        """
+        res     = -1
         tmpfile = filepath + "TMP.txt"
         try:
+            # 创建临时文件,将要合并的文件名列表写入
             with open(tmpfile, 'w') as fd:
                 for item in srcfilepaths:
                     fd.write('file \'' + item + '\'\n')
-
+            # 调用ffmpeg进行合并
             cmd = "ffmpeg -f concat -safe 0 -i \"" + tmpfile + "\" -c copy \"" + filepath + "\""
             if showshell:
                 res = subprocess.call(cmd, shell=True)
             else:
                 res = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if res != 0:
-                result = False
         except:
-            result = False
+            pass
 
         if os.access(tmpfile,0):
             os.remove(tmpfile)
-        return result
+        return res == 0
 
 
 
