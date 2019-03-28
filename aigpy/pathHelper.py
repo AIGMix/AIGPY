@@ -44,6 +44,18 @@ def remove(path):
     except:
         return False
 
+
+def copyFile(srcfile, dstfile):
+    if not os.path.isfile(srcfile):
+        return False
+    else:
+        fpath, fname = os.path.split(dstfile)  
+        if not os.path.exists(fpath):
+            os.makedirs(fpath) 
+        shutil.copyfile(srcfile, dstfile) 
+    return True
+
+
 def replaceLimitChar(path, newChar):
     if path is None:
         return ""

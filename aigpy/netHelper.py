@@ -29,6 +29,25 @@ def downloadJson(url, timeout=(3.05, 27)):
     except:
         return
 
+def getFileSize(url):
+    """
+    #Func    :   获取文件大小       
+    #Param   :   url    [in] 链接       
+    #Return  :   Err:-1     
+    """
+    if sys.version_info > (2, 7):
+        from urllib.request import urlopen
+    else:
+        from urllib2 import urlopen
+
+    try:
+        response = urlopen(url)
+        dic    = dict(response.header)
+        length = dic['Content-Length']
+        return length
+    except:
+        return -1
+
 def downloadFile(url, fileName):
     if sys.version_info > (2, 7):
         from urllib.request import urlopen
