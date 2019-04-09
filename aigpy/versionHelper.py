@@ -15,9 +15,9 @@ import aigpy.configHelper as ConfigHelper
 
 def getVersion(in_filepath):
     try:
-        if os.path.isfile(in_filepath) == False:
+        if os.path.isfile(in_filepath) is False:
             return ""
-        if os.path.exists(in_filepath) == False:
+        if os.path.exists(in_filepath) is False:
             return ""
         
         # get system
@@ -61,19 +61,19 @@ class VersionFile(object):
             self.readFile(path)
 
     def saveFile(self, path):
-        if path == None or self.version == None or self.mainFile == None:
+        if path is None or self.version is None or self.mainFile is None:
             return False
         if self.isZip != 0 and self.zipFile == '':
             return False
 
         check = ConfigHelper.SetValue('common', 'version',  self.version, path)
         check = ConfigHelper.SetValue('common', 'mainfile', self.mainFile, path)
-        if check == False:
+        if check is False:
             return False
         check = ConfigHelper.SetValue('common', 'iszip',  self.isZip, path)
         check = ConfigHelper.SetValue('common', 'zipfile',  self.isZip, path)
 
-        if self.elseFileList == None or len(self.elseFileList) == 0:
+        if self.elseFileList is None or len(self.elseFileList) == 0:
             return True
         ConfigHelper.SetValue('common', 'elsenum', len(self.elseFileList), path)
         index = 0
@@ -83,7 +83,7 @@ class VersionFile(object):
         return True
 
     def readFile(self, path):
-        if path == None:
+        if path is None:
             return False
         ver      = ConfigHelper.GetValue('common', 'version', '', path)
         mainFile = ConfigHelper.GetValue('common', 'mainfile', '', path)

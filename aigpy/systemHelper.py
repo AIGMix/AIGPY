@@ -12,13 +12,16 @@ import os
 import platform
 
 def getOwnPath(in__file__):
+    """获取进程基本目录"""
     return os.path.dirname(os.path.realpath(in__file__))
 
 def isWindows():
+    """是否为windows系统"""
     sysName = platform.system()
     return sysName == "Windows"
 
 def isLinux():
+    """是否为linux系统"""
     sysName = platform.system()
     return sysName == "Linux"
 
@@ -26,7 +29,7 @@ def getProcessID(name):
     """
     #Func    :   通过进程名获取进程ID，可以用`basename xxx`         
     #Param   :   name   [in]    进程名          
-    #Return  :   进程ID数组(int)
+    #Return  :   进程ID数组(int)    
     """
     try:
         lines = os.popen('ps aux | grep "' + name + '" | grep -v grep').readlines()

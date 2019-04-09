@@ -22,7 +22,7 @@ def Count(fileName, section=None):
         ret = 0
         cf  = configparser.ConfigParser()
         cf.read(fileName)
-        if section == None:
+        if section is None:
             seclist = cf.sections()
             for sec in seclist:
                 oplist = cf.options(sec)
@@ -63,8 +63,8 @@ def GetValue(section, key, default, fileName):
 
         for item in cf[section]:
             if item == key:
-                str = cf.get(section, key)
-                return str
+                stri = cf.get(section, key)
+                return stri
         return default
     except:
         return default
@@ -75,17 +75,17 @@ def SetValue(section, key, value, fileName):
     #Param   :   section    [in] 小组名     
     #Param   :   key        [in] 参数名     
     #Param   :   value      [in] 参数值      
-    #Param   :   fileName   [in] 文件名 
+    #Param   :   fileName   [in] 文件名         
     #Return  :   True/False 
     """
     try:
-        if os.access(fileName, 0) == False:
+        if os.access(fileName, 0) is False:
             fp = open(fileName, "w")
             fp.close()
 
         cf = configparser.ConfigParser()
         cf.read(fileName)
-        if cf.has_section(section) == False:
+        if cf.has_section(section) is False:
             cf[section] = {}
 
         cf[section][key] = value
@@ -94,3 +94,4 @@ def SetValue(section, key, value, fileName):
         return True
     except:
         return False
+

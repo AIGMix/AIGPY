@@ -13,4 +13,3 @@ pip uninstall -y aigpy
 
 REM upload to pip
 twine upload dist/*
-REM pip install --upgrade aigpy

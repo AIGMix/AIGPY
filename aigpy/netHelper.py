@@ -14,25 +14,38 @@ import requests
 import json
 from socket import *
 
-def downloadString(url, timeout=(3.05, 27)):
+def downloadString(url, timeouts=(3.05, 27)):
+    """
+    #Func    :   下载字符串        
+    #Param   :   url        [in] 链接       
+    #Param   :   timeouts   [in] 超时             
+    #Return  :   Err:None              
+    """
     try:
-        re = requests.get(url, timeout)
+        re = requests.get(url, timeouts)
         return re.content
     except:
-        return
+        return None 
     
-def downloadJson(url, timeout=(3.05, 27)):
+
+def downloadJson(url, timeouts=(3.05, 27)):
+    """
+    #Func    :   下载json   
+    #Param   :   url        [in] 链接       
+    #Param   :   timeouts   [in] 超时       
+    #Return  :   Err:None       
+    """
     try:
-        re = requests.get(url, timeout)
+        re = requests.get(url, timeouts)
         info = json.loads(re.content)
         return info
     except:
-        return
+        return None
 
 def getFileSize(url):
     """
     #Func    :   获取文件大小       
-    #Param   :   url    [in] 链接       
+    #Param   :   url    [in] 链接           
     #Return  :   Err:-1     
     """
     if sys.version_info > (2, 7):
@@ -42,18 +55,25 @@ def getFileSize(url):
 
     try:
         response = urlopen(url)
-        dic    = dict(response.header)
-        length = dic['Content-Length']
-        return length
+        info     = response.info()
+        dic      = dict(info)
+        length   = dic['Content-Length']
+        return int(length)
     except:
         return -1
 
 def downloadFile(url, fileName):
+    """
+    #Func    :   下载文件              
+    #Param   :   url        [in] 链接       
+    #Param   :   fileName   [in] 文件路径              
+    #Return  :   True/False            
+    """
     if sys.version_info > (2, 7):
         from urllib.request import urlopen
     else:
         from urllib2 import urlopen
-
+    
     try:
         response = urlopen(url)
         chunk = 16 * 1024
@@ -67,8 +87,16 @@ def downloadFile(url, fileName):
     except:
         return False
 
-def getIpStatus(host, port, timeout=1):
-    setdefaulttimeout(timeout)
+
+def getIpStatus(host, port, timeouts=1):
+    """
+    #Func    :   测试连接              
+    #Param   :   host        [in] IP地址       
+    #Param   :   port        [in] 端口       
+    #Param   :   timeouts    [in] 超时       
+    #Return  :   True/False       
+    """
+    setdefaulttimeout(timeouts)
     flag = True
     try:
         s = socket(AF_INET, SOCK_STREAM)
@@ -77,3 +105,4 @@ def getIpStatus(host, port, timeout=1):
     except:
         flag = False
     return flag
+

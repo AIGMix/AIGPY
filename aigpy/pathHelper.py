@@ -13,6 +13,11 @@ import os
 import shutil
 
 def getDiffTmpPathName(basePath):
+    """
+    #Func    :   获取临时文件名‘Tmp+X’              
+    #Param   :   basePath        [in] 基础路径             
+    #Return  :   string            
+    """
     count = 0
     basePath = basePath.replace("\\", "/")
     basePath = basePath.strip()
@@ -24,6 +29,11 @@ def getDiffTmpPathName(basePath):
     return path
 
 def mkdirs(path):
+    """
+    #Func    :   递归生成目录                
+    #Param   :   path        [in] 基础路径                
+    #Return  :   True/False         
+    """
     path = path.replace("\\", "/")
     path = path.strip()
     path = path.rstrip("/")
@@ -33,12 +43,17 @@ def mkdirs(path):
     return False
 
 def remove(path):
+    """
+    #Func    :   删除目录或文件                      
+    #Param   :   basePath        [in] 基础路径                
+    #Return  :   True/False           
+    """
     try:
-        if(os.path.exists(path) == False):
+        if(os.path.exists(path) is False):
             return True
-        if os.path.isfile(path) == True:
+        if os.path.isfile(path) is True:
             os.remove(path)
-        if os.path.isdir(path) == True:
+        if os.path.isdir(path) is True:
             shutil.rmtree(path)
         return True
     except:
@@ -46,6 +61,12 @@ def remove(path):
 
 
 def copyFile(srcfile, dstfile):
+    """
+    #Func    :   复制文件                         
+    #Param   :   srcfile        [in] 源文件路径                  
+    #Param   :   dstfile        [in] 目标文件路径                        
+    #Return  :   True/False       
+    """
     if not os.path.isfile(srcfile):
         return False
     else:
@@ -57,6 +78,12 @@ def copyFile(srcfile, dstfile):
 
 
 def replaceLimitChar(path, newChar):
+    """
+    #Func    :   移除路径名中不符合的字符                                         
+    #Param   :   path           [in] 路径名                                 
+    #Param   :   newChar        [in] 要替换的字符                               
+    #Return  :   string            
+    """
     if path is None:
         return ""
     if newChar is None:
@@ -73,6 +100,11 @@ def replaceLimitChar(path, newChar):
     return path
 
 def getDirName(filepath):
+    """
+    #Func    :   获取目录名                                                  
+    #Param   :   filepath      [in] 路径文件名                                          
+    #Return  :   string              
+    """
     filepath = filepath.replace('\\', '/')
     index    = filepath.rfind('/')
     if index == -1:
@@ -80,6 +112,11 @@ def getDirName(filepath):
     return filepath[0:index+1]
 
 def getFileName(filepath):
+    """
+    #Func    :   获取文件名                                                           
+    #Param   :   filepath      [in] 路径文件名                                          
+    #Return  :   string              
+    """
     filepath = filepath.replace('\\', '/')
     index = filepath.rfind('/')
     if index == -1:
@@ -87,6 +124,11 @@ def getFileName(filepath):
     return filepath[index+1:len(filepath)]
 
 def getFileNameWithoutExtension(filepath):
+    """ 
+    #Func    :   获取不带扩展名的文件名                                                    
+    #Param   :   filepath      [in] 路径文件名                                           
+    #Return  :   string               
+    """
     filepath = getFileName(filepath)
     index = filepath.rfind('.')
     if index == -1:
@@ -94,6 +136,11 @@ def getFileNameWithoutExtension(filepath):
     return filepath[0:index]
 
 def getFileExtension(filepath):
+    """
+    #Func    :   获取扩展名(如.txt)                                                              
+    #Param   :   filepath      [in] 路径文件名                                              
+    #Return  :   string                 
+    """
     filepath = getFileName(filepath)
     index = filepath.rfind('.')
     if index == -1:
@@ -101,12 +148,35 @@ def getFileExtension(filepath):
     return filepath[index:len(filepath)]
 
 def getDirSize(path):
+    """
+    #Func    :   获取目录大小                                                             
+    #Param   :   filepath      [in] 路径名                                               
+    #Return  :   整数                     
+    """
     try:
-        if os.path.isdir(path) == False:
+        if os.path.isdir(path) is False:
             return 0
         size = 0
-        for root, dirs, files in os.walk(dir):
+        for root, dirs, files in os.walk(path):
             size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
         return size
     except:
         return 0
+
+def getDirFiles(path):
+    """
+    #Func    :   获取文件下的全部路径文件名                                                             
+    #Param   :   filepath      [in] 路径名                                                
+    #Return  :   字符串数组                  
+    """
+    try:
+        if os.path.isdir(path) is False:
+            return []
+        ret = []
+        for root, dirs, files in os.walk(path):
+            root = root.replace('\\','/')
+            for item in files:
+                ret.append(root + '/' + item)
+        return ret
+    except:
+        return []

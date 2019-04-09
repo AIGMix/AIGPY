@@ -38,7 +38,7 @@ class updateTool(object):
         self.curVer.mainFile     = mainFile
         self.curVer.elseFileList = elseList
         self.curVer.zipFile      = zipFile
-        if zipFile != None:
+        if zipFile is not None:
             self.curVer.isZip    = 1
         self.curVer.saveFile(self.verPath)
 
@@ -48,22 +48,22 @@ class updateTool(object):
 
     def _getNetVerinfo(self):
         tmpFile = self.curPath + '\\' + 'aigpy-tmp.ini'
-        if False == netHelper.downloadFile(self.netUrl + '//' + self.verName, tmpFile):
+        if not netHelper.downloadFile(self.netUrl + '//' + self.verName, tmpFile):
             return False
         return self.netVer.readFile(tmpFile)
 
     def isNeedUpdate(self):
-        if self.curVer.version == None:
+        if self.curVer.version is None:
             return False
-        if self.netVer.version == None:
-            if self._getNetVerinfo() == False:
+        if self.netVer.version is None:
+            if self._getNetVerinfo() is False:
                 return False
         return versionHelper.cmpVersion(self.curVer.version, self.netVer.version) < 0
 
     def _downloadFiles(self):
         check = pathHelper.remove(self.tmpPath)
         check = pathHelper.mkdirs(self.tmpPath)
-        if self.netVer.mainFile == None:
+        if self.netVer.mainFile is None:
             return False
         if self.netVer.isZip == 0:
             plist = []
@@ -73,12 +73,12 @@ class updateTool(object):
             for item in plist:
                 urlpath = self.netUrl + '//' + item
                 topath  = self.tmpPath + '\\' + item
-                if netHelper.downloadFile(urlpath, topath) == False:
+                if netHelper.downloadFile(urlpath, topath) is False:
                     return False
         else:
             urlpath = self.netUrl + '//' + self.netVer.zipFile
             topath = self.tmpPath + '\\' + self.netVer.zipFile
-            if netHelper.downloadFile(urlpath, topath) == False:
+            if netHelper.downloadFile(urlpath, topath) is False:
                 return False
             return zipHelper.unzip(topath, self.tmpPath)
         return True

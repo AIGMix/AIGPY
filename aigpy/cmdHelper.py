@@ -33,8 +33,8 @@ def myinputInt(desc, default):
     #Return  :   输入的整型数         
     """
     try:
-        str = myinput(desc)
-        ret = int(str)
+        stri = myinput(desc)
+        ret  = int(stri)
         return ret
     except:
         return default
@@ -47,16 +47,17 @@ def myinputFloat(desc, default):
     #Return  :   输入的浮点数         
     """
     try:
-        str = myinput(desc)
-        ret = float(str)
+        stri = myinput(desc)
+        ret  = float(stri)
         return ret
     except:
         return default
 
-def findInArgv(str):
+
+def findInArgv(stri):
     """
     #Func    :   mian参列表中查找第一个有此子串的项      
-    #Param   :   str    [in] 子串       
+    #Param   :   stri    [in] 子串       
     #Return  :   None/子项    
     """
     if sys.argv == None or len(sys.argv) == 0:
@@ -65,22 +66,22 @@ def findInArgv(str):
     for item in sys.argv:
         if item == sys.argv[0]:
             continue
-        if item.find(str) >= 0:
+        if item.find(stri) >= 0:
             return item
     return None
 
-def converArgvToStr(list):
+def converArgvToStr(array):
     """
     #Func    :   将列表转成main参字符串     
     #Param   :   list   [in] 项列表     
     #Return  :   字符串         
     """
-    str = ''
-    for item in list:
-        if str != '':
-            str = str + ' '
-        str = str + '"' + item + '"'
-    return str
+    stri = ''
+    for item in array:
+        if stri != '':
+            stri = stri + ' '
+        stri = stri + '"' + item + '"'
+    return stri
 
 
 class TextColor(Enum):
@@ -101,6 +102,7 @@ class TextColor(Enum):
         Red    = 31
         Yellow = 33
         White  = 37
+
 class BackGroundColor(Enum):
     """
     #Func    :   背景颜色
@@ -135,14 +137,14 @@ def myprint(desc,textColor=None,backgroundColor=None):
     #Param   :   backgroundColor    [in] 背景颜色       
     #Return  :   None 
     """
-    if textColor == None and backgroundColor == None:
+    if textColor is None and backgroundColor is None:
         sys.stdout.write(desc)
     else:
         if platform.system() == 'Windows':
             color = 0
-            if textColor != None:
+            if textColor is not None:
                 color = color | textColor.value
-            if backgroundColor != None:
+            if backgroundColor is not None:
                 color = color | backgroundColor.value
             #获取输出句柄,修改颜色
             handle = ctypes.windll.kernel32.GetStdHandle(WinCmdHandleID.Output.value)
@@ -153,9 +155,9 @@ def myprint(desc,textColor=None,backgroundColor=None):
             ctypes.windll.kernel32.SetConsoleTextAttribute(handle, value)
         else:
             color = ''
-            if textColor != None:
+            if textColor is not None:
                 color = str(textColor.value)
-            if backgroundColor != None:
+            if backgroundColor is not None:
                 if color != '':
                     color = color +';'
                 color = color + str(backgroundColor.value)
@@ -172,8 +174,6 @@ def showTable(columns, rows, colsColor=None, rowsColor=None):
     #Return  :   True/False 
     """
     try:
-        numCol = len(columns)
-        numRow = len(rows)
         widths = []
         for item in columns:
             name = str(item)   
@@ -218,4 +218,3 @@ def showTable(columns, rows, colsColor=None, rowsColor=None):
         return True
     except:
         return False
-

@@ -48,15 +48,15 @@ def align(string, num, isLeft=True):
     #Param   :   isLeft     是否左对齐          
     #Return  :   字符串         
     """
-    len = 0
+    leng = 0
     for c in string:
-        len += 1
+        leng += 1
         if isChinese(c, True):
-            len += 1
-    if len >= num:
+            leng += 1
+    if leng >= num:
         return string
     appendStr = ""
-    while num - len > 0:
+    while num - leng > 0:
         appendStr += " "
         num -= 1
     if isLeft:

@@ -71,7 +71,7 @@ class FFmpegTool(object):
             # Creat tmpdir
             path    = pathHelper.getDirName(filepath)
             tmpPath = pathHelper.getDiffTmpPathName(path)
-            if pathHelper.mkdirs(tmpPath) == False:
+            if pathHelper.mkdirs(tmpPath) is False:
                 return False
             
             # Progress
