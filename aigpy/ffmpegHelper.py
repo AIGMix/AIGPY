@@ -40,7 +40,8 @@ class FFmpegTool(object):
         except:
             pass
         self.completeCount = self.completeCount + 1
-        self.progress.step()
+        if self.progress is not None:
+            self.progress.step()
         return
 
     
@@ -86,7 +87,7 @@ class FFmpegTool(object):
             self.completeCount = 0
             for item in urllist:
                 index = index + 1
-                path = tmpPath + '\\' + str(index) + ".mp4"
+                path = tmpPath + '/' + str(index) + ".mp4"
                 allpath.append(path)
                 if os.path.exists(path):
                     os.remove(path)

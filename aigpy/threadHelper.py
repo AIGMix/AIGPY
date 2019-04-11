@@ -8,6 +8,8 @@
 @Contact :   yaronhuang@qq.com
 @Desc    :   Thread Tool 
 '''
+import queue
+import threading
 
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
@@ -17,8 +19,8 @@ from concurrent.futures import ALL_COMPLETED
 class ThreadTool(object):
     def __init__(self, maxThreadNum):
         self.allTask = []
-        self.thread = ThreadPoolExecutor(max_workers=maxThreadNum)
-
+        self.thread  = ThreadPoolExecutor(max_workers=maxThreadNum)
+        
     def start(self, function, *args, **kwargs):
         """启动线程"""
         if(len(args) > 0 and len(kwargs) > 0):
@@ -27,7 +29,9 @@ class ThreadTool(object):
             handle = self.thread.submit(function, *args)
         elif len(kwargs) > 0:
             handle = self.thread.submit(function, **kwargs)
-
+        else:
+            handle = self.thread.submit(function)
+        
         self.allTask.append(handle)
         return handle
 
@@ -48,5 +52,29 @@ class ThreadTool(object):
     def waitAnyone(self):
         """等待任何一个线程技术"""
         as_completed(self.allTask)
-
     
+    def close(self):
+        self.thread.shutdown(False)
+
+
+class ThreadPoolManger(object):
+    def __init__(self, maxThreadNum):
+        self.work_queue = queue.Queue()
+        self.allTask    = []
+        self.thread     = ThreadPoolExecutor(max_workers=maxThreadNum)
+        for i in range(maxThreadNum):
+            handle = self.thread.submit(self.__workThread__)
+            self.allTask.append(handle)
+
+    def __workThread__(self):
+        while True:
+            func, args = self.work_queue.get()
+            func(*args)
+            self.work_queue.task_done()
+
+    def addWork(self, func, *args):
+        self.work_queue.put((func, args))
+    
+    def close(self):
+        self.thread.shutdown(False)
+        

@@ -7,8 +7,19 @@ sys.path.append('./')
 import aigpy.zipHelper as zipHelper
 from aigpy.updateHelper import updateTool
 import aigpy.ffmpegHelper as ffmpegHelper
+from aigpy.serverHelper import ServerTool
+
+def func(httpreq):
+    i = 0
+    return '111'
 
 if __name__ == '__main__':
+    rootDir = 'C:\\Users\\huangyue\\Downloads\\登录界面模板\\后台\\main\\'
+    server = ServerTool(rootDir, rootDir)
+
+    server.start('127.0.0.1', 9999)
+    while True:
+        pass
     plist = []
     plist.append("e:\\test\\1.ini")
     plist.append("e:\\test\\2.ini")
