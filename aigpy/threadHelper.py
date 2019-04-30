@@ -77,4 +77,4 @@ class ThreadPoolManger(object):
     
     def close(self):
         self.thread.shutdown(False)
-        
+    

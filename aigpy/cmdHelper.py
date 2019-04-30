@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# -*- encoding: utf-8 -*-
-import sys
-import ctypes
-import platform
-from enum import Enum
 '''
 @File    :   cmdHelper.py
 @Time    :   2019/02/27
@@ -12,6 +6,26 @@ from enum import Enum
 @Contact :   yaronhuang@qq.com
 @Desc    :   
 '''
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+import sys
+import ctypes
+import platform
+from enum import Enum
+
+
+def isInputYes(inputstr):
+    """
+    #Func    :   输入的字符串是否为yes      
+    #Param   :   inputstr   [in] 输入串     
+    #Return  :   True/False         
+    """
+    if inputstr is None:
+        return False
+    inputstr = str(inputstr).lower()
+    if inputstr == 'yes' or inputstr == 'y':
+        return True
+    return False
 
 def myinput(desc):
     """
