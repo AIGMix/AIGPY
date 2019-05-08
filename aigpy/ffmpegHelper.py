@@ -11,7 +11,6 @@
 
 import os
 import re
-import sys
 import shutil
 import subprocess
 
@@ -87,15 +86,15 @@ class FFmpegTool(object):
             self.completeCount = 0
             for item in urllist:
                 index = index + 1
-                path = tmpPath + '/' + str(index) + ".mp4"
+                path = tmpPath + '/' + str(index) + ".ts"
                 allpath.append(path)
                 if os.path.exists(path):
                     os.remove(path)
                 self.thread.start(self.__thradfunc_dl, item, path, 3)
             self.thread.waitAll()
-            self.mergerByFiles(allpath, filepath, showshell)
+            ret = self.mergerByFiles(allpath, filepath, showshell)
             shutil.rmtree(tmpPath)
-            return True
+            return ret
         except:
             return False
 
@@ -126,13 +125,36 @@ class FFmpegTool(object):
         #Param   :   showshell      [in] 是否显示cmd信息        
         #Return  :   True/False 
         """
+        filepath = os.path.abspath(filepath)
         res     = -1
         tmpfile = filepath + "TMP.txt"
+        paths   = srcfilepaths
+        group   = None
+        groupnum= 50
         try:
+            # 先分组合并，再一起合并
+            if len(srcfilepaths) > groupnum:
+                dirName = pathHelper.getDirName(filepath)
+                group   = pathHelper.getDiffTmpPathName(dirName)
+                if pathHelper.mkdirs(group) is False:
+                    return False
+                
+                newPaths = []
+                array    = [srcfilepaths[i:i+groupnum] for i in range(0, len(srcfilepaths), groupnum)]
+                for index, item in enumerate(array):
+                    file = group + '/' + str(index) + ".mp4"
+                    newPaths.append(file)
+                    if self.mergerByFiles(item, file, showshell) is False:
+                        return False
+                paths = newPaths
+
             # 创建临时文件,将要合并的文件名列表写入
             with open(tmpfile, 'w') as fd:
-                for item in srcfilepaths:
+                for item in paths:
+                    item = os.path.abspath(item)
                     fd.write('file \'' + item + '\'\n')
+
+
             # 调用ffmpeg进行合并
             cmd = "ffmpeg -f concat -safe 0 -i \"" + tmpfile + "\" -c copy \"" + filepath + "\""
             if showshell:
@@ -144,8 +166,15 @@ class FFmpegTool(object):
 
         if os.access(tmpfile,0):
             os.remove(tmpfile)
+        if group is not None:
+            shutil.rmtree(group)
         return res == 0
 
 
-
+# tool = FFmpegTool(1)
+# array = []
+# array.append('E://7//Video//Tmp0//1.ts')
+# array.append('E://7//Video//Tmp0//2.ts')
+# array.append('E://7//Video//Tmp0//3.ts')
+# tool.mergerByFiles(array, 'E://7//Video//test.mp4')
 
