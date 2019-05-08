@@ -21,11 +21,18 @@ import aigpy.threadHelper as threadHelper
 from aigpy.progressHelper import ProgressTool
 
 class FFmpegTool(object):
-    def __init__(self, threadNum=50):
+    def __init__(self, threadNum=50, mergerTimeout=None):
+        """
+        #Func    :   初始化             
+        #Param   :   threadNum     [in] 线程数          
+        #Param   :   mergerTimeout [in] 超时 秒     
+        #Return  :   True/False             
+        """
         self.thread        = threadHelper.ThreadTool(threadNum)
         self.waitCount     = 0
         self.completeCount = 0
         self.progress      = None
+        self.mergerTimeout = mergerTimeout
         return
     
     def __thradfunc_dl(self, url, filepath, retrycount):
@@ -33,7 +40,7 @@ class FFmpegTool(object):
         try:
             while retrycount > 0:
                 retrycount = retrycount - 1
-                check = netHelper.downloadFile(url, filepath)
+                check = netHelper.downloadFile(url, filepath, 30)
                 if check:
                     break
         except:
@@ -52,6 +59,21 @@ class FFmpegTool(object):
         for item in plist:
             urllist.append("http"+item)
         return urllist
+
+    def __process(self, cmd, retrycount, showshell, filename):
+        while retrycount >= 0:
+            retrycount -= 1
+            try:
+                if showshell:
+                    res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True)
+                else:
+                    res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                if res == 0:
+                    return True
+            except:
+                pass
+            pathHelper.remove(filename)
+        return False
 
     def mergerByM3u8_Multithreading(self, url, filepath, showprogress=False, showshell=False):
         """
@@ -108,14 +130,12 @@ class FFmpegTool(object):
         """
         res = -1
         try:
+            filepath = os.path.abspath(filepath)
             cmd = "ffmpeg -safe 0 -i " + url + " -c copy -bsf:a aac_adtstoasc \"" + filepath + "\""
-            if showshell:
-                res = subprocess.call(cmd, shell=True)
-            else:
-                res = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            res = self.__process(cmd, 3, showshell, filepath)
         except:
             pass
-        return res == 0
+        return res
 
     def mergerByFiles(self, srcfilepaths, filepath, showshell=False):
         """
@@ -157,10 +177,7 @@ class FFmpegTool(object):
 
             # 调用ffmpeg进行合并
             cmd = "ffmpeg -f concat -safe 0 -i \"" + tmpfile + "\" -c copy \"" + filepath + "\""
-            if showshell:
-                res = subprocess.call(cmd, shell=True)
-            else:
-                res = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            res = self.__process(cmd, 3, showshell, filepath)
         except:
             pass
 
@@ -168,7 +185,7 @@ class FFmpegTool(object):
             os.remove(tmpfile)
         if group is not None:
             shutil.rmtree(group)
-        return res == 0
+        return res
 
 
 # tool = FFmpegTool(1)

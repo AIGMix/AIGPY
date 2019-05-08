@@ -62,7 +62,7 @@ def getFileSize(url):
     except:
         return -1
 
-def downloadFile(url, fileName):
+def downloadFile(url, fileName, stimeout=None):
     """
     #Func    :   下载文件              
     #Param   :   url        [in] 链接       
@@ -75,7 +75,11 @@ def downloadFile(url, fileName):
         from urllib2 import urlopen
     
     try:
-        response = urlopen(url)
+        if timeout is None:
+            response = urlopen(url)
+        else:
+            response = urlopen(url, timeout=stimeout)
+
         chunk = 16 * 1024
         with open(fileName, 'wb') as f:
             while True:
