@@ -14,11 +14,11 @@ import re
 import shutil
 import subprocess
 
+import aigpy.systemHelper as systemHelper
 import aigpy.netHelper as netHelper
 import aigpy.pathHelper as pathHelper
 import aigpy.threadHelper as threadHelper
-
-from aigpy.progressHelper import ProgressTool
+from   aigpy.progressHelper import ProgressTool
 
 class FFmpegTool(object):
     def __init__(self, threadNum=50, mergerTimeout=None):
@@ -61,17 +61,24 @@ class FFmpegTool(object):
         return urllist
 
     def __process(self, cmd, retrycount, showshell, filename):
+        stdoutFile = None
         while retrycount >= 0:
             retrycount -= 1
             try:
                 if showshell:
                     res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True)
                 else:
-                    res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    exten = pathHelper.getFileExtension(filename)
+                    stdoutFile = filename.replace(exten, '-stdout.txt')
+                    fp  = open(stdoutFile, 'w')
+                    res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True, stdout=fp, stderr=fp)
+                    fp.close()
+                    pathHelper.remove(stdoutFile)
                 if res == 0:
                     return True
             except:
                 pass
+            pathHelper.remove(stdoutFile)
             pathHelper.remove(filename)
         return False
 
@@ -102,19 +109,20 @@ class FFmpegTool(object):
                 self.progress = ProgressTool(len(urllist))
 
             # Download files
-            index              = 0
             allpath            = []
             self.waitCount     = len(urllist)
             self.completeCount = 0
-            for item in urllist:
-                index = index + 1
-                path = tmpPath + '/' + str(index) + ".ts"
+            for i, item in enumerate(urllist):
+                index = i + 100001
+                path  = tmpPath + '/' + str(index) + ".ts"
+                path  = os.path.abspath(path)
                 allpath.append(path)
                 if os.path.exists(path):
                     os.remove(path)
                 self.thread.start(self.__thradfunc_dl, item, path, 3)
             self.thread.waitAll()
-            ret = self.mergerByFiles(allpath, filepath, showshell)
+            ret = self.mergerByTs(tmpPath, filepath, showshell)
+            # ret = self.mergerByFiles(allpath, filepath, showshell)
             shutil.rmtree(tmpPath)
             return ret
         except:
@@ -136,6 +144,63 @@ class FFmpegTool(object):
         except:
             pass
         return res
+
+    def mergerByTs(self, srcDir, filepath, showshell=False):
+        srcDir   = os.path.abspath(srcDir)
+        filepath = os.path.abspath(filepath)
+        if os.path.exists(srcDir) is False:
+            return False
+        
+        exten   = pathHelper.getFileExtension(filepath)
+        tmppath = filepath.replace(exten, '.ts')
+        if systemHelper.isLinux():
+            srcDir += '/*.ts'
+            cmd = 'cat ' + srcDir + ' > "' + tmppath + '"'
+        else:
+            srcDir += '\\*.ts'
+            cmd = 'copy /b "' + srcDir + '" "' + tmppath + '"'
+        
+        ret = self.__process(cmd, 3, showshell, tmppath)
+        if ret is True:
+            cmd = "ffmpeg -i \"" + tmppath + "\" -c copy \"" + filepath + "\""
+            ret = self.__process(cmd, 3, showshell, filepath)
+        pathHelper.remove(tmppath)
+        return ret
+
+
+    def mergerByTsfiles(self, srcfilepaths, filepath, showshell=False):
+        """
+        #Func    :   合并ts文件             
+        #Return  :   True/False         
+        """
+        filepath = os.path.abspath(filepath)
+        exten    = pathHelper.getFileExtension(filepath)
+        tmppath  = filepath.replace(exten, '.ts')
+        tmppath2 = filepath.replace(exten, '2.ts')
+        array    = [srcfilepaths[i:i+25] for i in range(0, len(srcfilepaths), 25)]
+        pathHelper.remove(tmppath)
+        pathHelper.remove(tmppath2)
+
+        for item in array:
+            for index, file in enumerate(item):
+                item[index] = '"'+ file + '"'
+            form = ' + '.join(item)
+            if os.access(tmppath, 0):
+                form = '"' + tmppath + '" + ' + form
+            
+            cmd = 'copy /b ' + form + ' "' + tmppath2 + '"'
+            ret = self.__process(cmd, 3, showshell, tmppath2)
+            if ret is False:
+                break
+            pathHelper.remove(tmppath)
+            os.rename(tmppath2, tmppath)
+
+        if ret is True:
+            cmd = "ffmpeg -i \"" + tmppath + "\" -c copy \"" + filepath + "\""
+            ret = self.__process(cmd, 3, showshell, filepath)
+        pathHelper.remove(tmppath)
+        pathHelper.remove(tmppath2)
+        return ret
 
     def mergerByFiles(self, srcfilepaths, filepath, showshell=False):
         """
@@ -187,6 +252,8 @@ class FFmpegTool(object):
             shutil.rmtree(group)
         return res
 
+    def test(self):
+        self.__process('dir', 3, False, 'e:\\7\\Video\\1.ts')
 
 # tool = FFmpegTool(1)
 # array = []
