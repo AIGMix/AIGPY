@@ -80,10 +80,10 @@ def downloadFile(url, fileName, stimeout=None):
         else:
             response = urlopen(url, timeout=stimeout)
 
-        chunk = 16 * 1024
+        chunksize = 16 * 1024
         with open(fileName, 'wb') as f:
             while True:
-                chunk = response.read(chunk)
+                chunk = response.read(chunksize)
                 if not chunk:
                     break
                 f.write(chunk)
