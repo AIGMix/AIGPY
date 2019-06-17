@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
 '''
 @File    :   cmdHelper.py
 @Time    :   2019/02/27
@@ -6,8 +8,7 @@
 @Contact :   yaronhuang@qq.com
 @Desc    :   
 '''
-#!/usr/bin/env python
-# -*- encoding: utf-8 -*-
+
 import sys
 import ctypes
 import platform
