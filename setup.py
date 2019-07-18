@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = 'aigpy',
-    version='2019.6.17.0',
+    version='2019.7.18.0',
     license = "MIT Licence",
     description = "Python Common Tool",
 
@@ -11,7 +11,8 @@ setup(
     packages = find_packages(),
     include_package_data = True,
     platforms = "any",
-    install_requires=["requests", "configparser", "futures", "reportlab", "Pillow"],
+    install_requires=["requests", "configparser",
+                      "futures", "reportlab", "Pillow", "mutagen"],
     # entry_points={'console_scripts': [
     #     'tidal-dl = tidal_dl:main', ]}
 )

@@ -180,7 +180,7 @@ class HttpRequest(object):
             self.response_line = ErrorCode.NOT_FOUND
             self.response_head['Content-Type'] = 'text/html'
             self.response_body = self.__readNotFoundHtml__()
-
+            
     def __processSession__(self):
         self.session = Session()
         # 没有提交cookie，创建cookie
