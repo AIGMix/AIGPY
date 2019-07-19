@@ -4,8 +4,8 @@ REM remove old dir
 rmdir /s/q dist
 rmdir /s/q build
 rmdir /s/q aigpy.egg-info
-REM rmdir /s/q exe
-rm exe/aigpy.exe
+rmdir /s/q exe
+REM rm exe/aigpy.exe
 mkdir exe
 
 REM build

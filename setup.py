@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = 'aigpy',
-    version='2019.7.18.0',
+    version='2019.7.19.0',
     license = "MIT Licence",
     description = "Python Common Tool",
 

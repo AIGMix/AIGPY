@@ -12,7 +12,6 @@ import os
 from mutagen import File
 from mutagen import flac
 from mutagen import mp4
-from mutagen import m4a
 from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TOPE, TCON
 
 def _getHash(pHash, key):
@@ -32,6 +31,13 @@ def _getFileData(filepath):
             return data
     except:
         return None
+
+def _tryInt(obj):
+    try:
+        ret = int(obj)
+        return ret
+    except:
+        return 0
 
 def _getArrayStr(array):
     if len(array) <= 0:
@@ -81,7 +87,7 @@ class TagTool(object):
         # self._handle.tags.add(TOPE(encoding=3, text=self.albumartist))
         self._handle.tags.add(TPE1(encoding=3, text=self.artist))
         self._handle.tags.add(TCOP(encoding=3, text=self.copyright))
-        self._handle.tags.add(TRCK(encoding=3, text=self.tracknumber))
+        self._handle.tags.add(TRCK(encoding=3, text=str(self.tracknumber)))
         # self._handle.tags.add(TRCK(encoding=3, text=self.discnum))
         self._handle.tags.add(TCON(encoding=3, text=self.genre))
         self._handle.tags.add(TDRC(encoding=3, text=self.date))
@@ -95,8 +101,8 @@ class TagTool(object):
         self._handle.tags['albumartist'] = self.albumartist
         self._handle.tags['artist'] = self.artist
         self._handle.tags['copyright'] = self.copyright
-        self._handle.tags['tracknumber'] = self.tracknumber
-        self._handle.tags['discnum'] = self.discnum
+        self._handle.tags['tracknumber'] = str(self.tracknumber)
+        self._handle.tags['discnum'] = str(self.discnum)
         self._handle.tags['genre'] = self.genre
         self._handle.tags['date'] = self.date
         self._savePic(coverPath)
@@ -109,9 +115,8 @@ class TagTool(object):
         self._handle.tags['aART'] = _getArrayStr(self.albumartist)
         self._handle.tags['©ART'] = _getArrayStr(self.artist)
         self._handle.tags['cprt'] = self.copyright
-        self._handle.tags['trkn'] = [[int(self.tracknumber),0]]
-        if len(self.discnum) > 0: 
-            self._handle.tags['disk'] = [[int(self.discnum), 0]]
+        self._handle.tags['trkn'] = [[_tryInt(self.tracknumber), 0]]
+        self._handle.tags['disk'] = [[_tryInt(self.discnum), 0]]
         self._handle.tags['©gen'] = self.genre
         self._handle.tags['©day'] = self.date
         self._savePic(coverPath)

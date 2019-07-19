@@ -10,10 +10,10 @@
 '''
 
 import sys
-import ctypes
-import platform
 from enum import Enum
+from colorama import init
 
+init(autoreset=True)
 
 def isInputYes(inputstr):
     """
@@ -103,46 +103,23 @@ class TextColor(Enum):
     """
     #Func    :   前景颜色
     """
-    if platform.system() == 'Windows':
-        Black   = 0x00
-        Blue    = 0x09
-        Green   = 0x0a
-        Red     = 0x0c
-        Yellow  = 0x0e
-        White   = 0x0f
-    else:
-        Black  = 30
-        Blue   = 34
-        Green  = 32
-        Red    = 31
-        Yellow = 33
-        White  = 37
+    Black  = 30
+    Blue   = 34
+    Green  = 32
+    Red    = 31
+    Yellow = 33
+    White  = 37
 
 class BackGroundColor(Enum):
     """
     #Func    :   背景颜色
     """
-    if platform.system() == 'Windows':
-        Black   = 0x00
-        Blue    = 0x90
-        Green   = 0xa0
-        Red     = 0xc0
-        Yellow  = 0xe0
-        White   = 0xf0
-    else:
-        Black  = 40
-        Blue   = 44
-        Green  = 42
-        Red    = 41
-        Yellow = 43
-        White  = 47
-class WinCmdHandleID(Enum): 
-    """
-    #Func    :   Windows的输入、输出、错误输出的句柄ID
-    """
-    Input  = -10
-    Output = -11
-    Error  = -12
+    Black  = 40
+    Blue   = 44
+    Green  = 42
+    Red    = 41
+    Yellow = 43
+    White  = 47
 
 def myprint(desc,textColor=None,backgroundColor=None):
     """
@@ -155,29 +132,15 @@ def myprint(desc,textColor=None,backgroundColor=None):
     if textColor is None and backgroundColor is None:
         sys.stdout.write(desc)
     else:
-        if platform.system() == 'Windows':
-            color = 0
-            if textColor is not None:
-                color = color | textColor.value
-            if backgroundColor is not None:
-                color = color | backgroundColor.value
-            #获取输出句柄,修改颜色
-            handle = ctypes.windll.kernel32.GetStdHandle(WinCmdHandleID.Output.value)
-            ctypes.windll.kernel32.SetConsoleTextAttribute(handle, color)
-            sys.stdout.write(desc)
-            #设置回原来的颜色
-            value = TextColor.Red.value | TextColor.Green.value | TextColor.Blue.value
-            ctypes.windll.kernel32.SetConsoleTextAttribute(handle, value)
-        else:
-            color = ''
-            if textColor is not None:
-                color = str(textColor.value)
-            if backgroundColor is not None:
-                if color != '':
-                    color = color +';'
-                color = color + str(backgroundColor.value)
-            color = color + 'm'
-            sys.stdout.write("\033[" + color + str(desc) + "\033[0m")
+        color = ''
+        if textColor is not None:
+            color = str(textColor.value)
+        if backgroundColor is not None:
+            if color != '':
+                color = color +';'
+            color = color + str(backgroundColor.value)
+        color = color + 'm'
+        sys.stdout.write("\033[" + color + str(desc) + "\033[0m")
 
 def showTable(columns, rows, colsColor=None, rowsColor=None):
     """
