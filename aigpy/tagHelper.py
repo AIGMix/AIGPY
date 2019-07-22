@@ -96,6 +96,8 @@ class TagTool(object):
         return True
 
     def _saveFlac(self, coverPath):
+        if self._handle.tags is None:
+            self._handle.add_tags()
         self._handle.tags['title'] = self.title
         self._handle.tags['album'] = self.album
         self._handle.tags['albumartist'] = self.albumartist
