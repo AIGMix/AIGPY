@@ -65,7 +65,9 @@ class TagTool(object):
         self.artist = ''
         self.copyright = ''
         self.tracknumber = ''
-        self.discnum = ''
+        self.totaltrack = ''
+        self.discnumber = ''
+        self.totaldisc = ''
         self.genre = ''
         self.date = ''
 
@@ -104,7 +106,9 @@ class TagTool(object):
         self._handle.tags['artist'] = self.artist
         self._handle.tags['copyright'] = self.copyright
         self._handle.tags['tracknumber'] = str(self.tracknumber)
-        self._handle.tags['discnum'] = str(self.discnum)
+        self._handle.tags['tracktotal'] = str(self.totaltrack)
+        self._handle.tags['discnumber'] = str(self.discnumber)
+        self._handle.tags['disctotal'] = str(self.totaldisc)
         self._handle.tags['genre'] = self.genre
         self._handle.tags['date'] = self.date
         self._savePic(coverPath)
@@ -117,8 +121,8 @@ class TagTool(object):
         self._handle.tags['aART'] = _getArrayStr(self.albumartist)
         self._handle.tags['©ART'] = _getArrayStr(self.artist)
         self._handle.tags['cprt'] = self.copyright
-        self._handle.tags['trkn'] = [[_tryInt(self.tracknumber), 0]]
-        self._handle.tags['disk'] = [[_tryInt(self.discnum), 0]]
+        self._handle.tags['trkn'] = [[_tryInt(self.tracknumber), _tryInt(self.totaltrack)]]
+        self._handle.tags['disk'] = [[_tryInt(self.discnumber), _tryInt(self.totaldisc)]]
         self._handle.tags['©gen'] = self.genre
         self._handle.tags['©day'] = self.date
         self._savePic(coverPath)

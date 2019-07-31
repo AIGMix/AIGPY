@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
+
 '''
 @File    :   netHelper.py
 @Time    :   2018/12/17
@@ -91,7 +92,6 @@ def downloadFile(url, fileName, stimeout=None):
     except:
         return False
 
-
 def getIpStatus(host, port, timeouts=1):
     """
     #Func    :   测试连接              
@@ -109,4 +109,6 @@ def getIpStatus(host, port, timeouts=1):
     except:
         flag = False
     return flag
+
+
 

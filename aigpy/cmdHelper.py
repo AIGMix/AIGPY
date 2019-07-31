@@ -40,6 +40,9 @@ def myinput(desc):
     else:
         return raw_input(desc)
 
+def myprintNoEnter(desc):
+    sys.stdout.write(desc)
+
 def myinputInt(desc, default):
     """
     #Func    :   输入整型优化-支持python2.x/3.x 
@@ -175,7 +178,7 @@ def showTable(columns, rows, colsColor=None, rowsColor=None):
         index = 0
         for item in columns:
             item = item.center(widths[index] + 2)
-            print('|', end='')
+            myprintNoEnter('|')
             myprint(item, colsColor)
             index = index + 1
             if len(widths) <= index:
@@ -186,7 +189,7 @@ def showTable(columns, rows, colsColor=None, rowsColor=None):
             index = 0
             for item in rObj:
                 item = item.center(widths[index] + 2)
-                print('|',end='')
+                myprintNoEnter('|')
                 myprint(item, rowsColor)
                 index = index + 1
                 if len(widths) <= index:
@@ -196,3 +199,5 @@ def showTable(columns, rows, colsColor=None, rowsColor=None):
         return True
     except:
         return False
+
+

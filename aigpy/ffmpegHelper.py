@@ -13,7 +13,7 @@ import os
 import re
 import shutil
 import subprocess
-
+import aigpy.fileHelper as fileHelper
 import aigpy.systemHelper as systemHelper
 import aigpy.netHelper as netHelper
 import aigpy.pathHelper as pathHelper
@@ -33,6 +33,7 @@ class FFmpegTool(object):
         self.completeCount = 0
         self.progress      = None
         self.mergerTimeout = mergerTimeout
+        self.enable        = self._checkTool()
         return
     
     def __thradfunc_dl(self, url, filepath, retrycount):
@@ -49,7 +50,6 @@ class FFmpegTool(object):
         if self.progress is not None:
             self.progress.step()
         return
-
     
     def __parseM3u8(self, url):
         content = netHelper.downloadString(url, None)
@@ -60,7 +60,7 @@ class FFmpegTool(object):
             urllist.append("http"+item)
         return urllist
 
-    def __process(self, cmd, retrycount, showshell, filename):
+    def __process(self, cmd, retrycount, showshell, filename, removeFile=True):
         stdoutFile = None
         while retrycount >= 0:
             retrycount -= 1
@@ -79,7 +79,8 @@ class FFmpegTool(object):
             except:
                 pass
             pathHelper.remove(stdoutFile)
-            pathHelper.remove(filename)
+            if removeFile:
+                pathHelper.remove(filename)
         return False
 
     def mergerByM3u8_Multithreading(self, url, filepath, showprogress=False, showshell=False):
@@ -202,6 +203,31 @@ class FFmpegTool(object):
         pathHelper.remove(tmppath2)
         return ret
 
+    def _checkTool(self):
+        check = False
+        try:
+            cmd = "ffmpeg -V"
+            stdoutFile = 'ffmpegcheck-stdout.txt'
+            fp = open(stdoutFile, 'w')
+            res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True, stdout=fp, stderr=fp)
+            fp.close()
+            txt = fileHelper.getFileContent(stdoutFile)
+            if 'version' in txt and 'Copyright' in txt:
+                check = True
+        except:
+            pass
+        pathHelper.remove(stdoutFile)
+        return check
+    def covertFile(self, srcfile, descfile, showshell=False):
+        try:
+            filepath = os.path.abspath(srcfile)
+            filepath2 = os.path.abspath(descfile)
+            cmd = "ffmpeg -i \"" + filepath + "\" -c copy \"" + filepath2 + "\""
+            ret = self.__process(cmd, 3, showshell, filepath, False)
+            return ret
+        except:
+            return False
+
     def mergerByFiles(self, srcfilepaths, filepath, showshell=False):
         """
         #Func    :   合并文件       
@@ -256,6 +282,7 @@ class FFmpegTool(object):
         self.__process('dir', 3, False, 'e:\\7\\Video\\1.ts')
 
 # tool = FFmpegTool(1)
+
 # array = []
 # array.append('E://7//Video//Tmp0//1.ts')
 # array.append('E://7//Video//Tmp0//2.ts')

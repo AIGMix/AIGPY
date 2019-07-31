@@ -8,7 +8,7 @@
 @Contact :   yaronhuang@qq.com
 @Desc    :   Thread Tool 
 '''
-import queue
+import sys
 import threading
 
 from concurrent.futures import ThreadPoolExecutor
@@ -59,7 +59,14 @@ class ThreadTool(object):
 
 class ThreadPoolManger(object):
     def __init__(self, maxThreadNum):
-        self.work_queue = queue.Queue()
+        v = sys.version_info
+        if v[0] > 2:
+            import queue
+            self.work_queue = queue.Queue()
+        else:
+            import Queue
+            self.work_queue = Queue.Queue()
+
         self.allTask    = []
         self.thread     = ThreadPoolExecutor(max_workers=maxThreadNum)
         for i in range(maxThreadNum):
@@ -77,4 +84,4 @@ class ThreadPoolManger(object):
     
     def close(self):
         self.thread.shutdown(False)
-    
+
