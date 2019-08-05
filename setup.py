@@ -2,15 +2,13 @@ from setuptools import setup, find_packages
 import sys
 
 if sys.version_info >= (3, 0):
-    install_requires = ["requests", "configparser", "colorama",
-                        "reportlab", "Pillow", "mutagen"]
+    install_requires = ["requests", "configparser", "colorama", "mutagen"]
 else:
-    install_requires = ["requests", "configparser", "colorama",
-                        "futures", "reportlab", "Pillow", "mutagen"]
+    install_requires = ["requests", "configparser", "colorama", "futures", "mutagen"]
 
 setup(
     name = 'aigpy',
-    version='2019.7.31.0',
+    version='2019.8.5.1',
     license = "MIT Licence",
     description = "Python Common Tool",
 

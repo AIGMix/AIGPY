@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
+#coding:utf-8
 '''
 @File    :   ffmpegHelper.py
 @Time    :   2018/12/17
@@ -11,6 +12,7 @@
 
 import os
 import re
+import sys
 import shutil
 import subprocess
 import aigpy.fileHelper as fileHelper
@@ -62,24 +64,35 @@ class FFmpegTool(object):
 
     def __process(self, cmd, retrycount, showshell, filename, removeFile=True):
         stdoutFile = None
+        fp = None
         while retrycount >= 0:
             retrycount -= 1
             try:
                 if showshell:
-                    res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True)
+                    if sys.version_info[0] > 2:
+                        res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True)
+                    else:
+                        cmd = cmd.encode(sys.getfilesystemencoding())
+                        res = subprocess.call(cmd, shell=True)
                 else:
                     exten = pathHelper.getFileExtension(filename)
                     stdoutFile = filename.replace(exten, '-stdout.txt')
                     fp  = open(stdoutFile, 'w')
-                    res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True, stdout=fp, stderr=fp)
+                    if sys.version_info[0] > 2:
+                        res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True, stdout=fp, stderr=fp)
+                    else:
+                        res = subprocess.call(cmd, shell=True, stdout=fp, stderr=fp)
                     fp.close()
+                    fp = None
                     pathHelper.remove(stdoutFile)
                 if res == 0:
                     return True
             except:
                 pass
+            if fp:
+                fp.close()
             pathHelper.remove(stdoutFile)
-            if removeFile:
+            if removeFile: 
                 pathHelper.remove(filename)
         return False
 
@@ -209,7 +222,10 @@ class FFmpegTool(object):
             cmd = "ffmpeg -V"
             stdoutFile = 'ffmpegcheck-stdout.txt'
             fp = open(stdoutFile, 'w')
-            res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True, stdout=fp, stderr=fp)
+            if sys.version_info[0] > 2:
+                res = subprocess.call(cmd, timeout=self.mergerTimeout, shell=True, stdout=fp, stderr=fp)
+            else:
+                res = subprocess.call(cmd, shell=True, stdout=fp, stderr=fp)
             fp.close()
             txt = fileHelper.getFileContent(stdoutFile)
             if 'version' in txt and 'Copyright' in txt:
@@ -281,11 +297,10 @@ class FFmpegTool(object):
     def test(self):
         self.__process('dir', 3, False, 'e:\\7\\Video\\1.ts')
 
+
 # tool = FFmpegTool(1)
-
-# array = []
-# array.append('E://7//Video//Tmp0//1.ts')
-# array.append('E://7//Video//Tmp0//2.ts')
-# array.append('E://7//Video//Tmp0//3.ts')
-# tool.mergerByFiles(array, 'E://7//Video//test.mp4')
-
+# src = u'e:\\7\\Album\\Beyonc\xe9\\Lemonade/01 Pray You Catch Me.mp4'
+# # s = src.encode(sys.getfilesystemencoding())
+# # short_path = win32api.GetShortPathName(src)
+# desc = u'e:\\7\\Album\\Beyonc\xe9\\Lemonade/01 Pray You Catch Me.m4a'
+# tool.covertFile(src, desc)

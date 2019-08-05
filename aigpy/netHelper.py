@@ -49,7 +49,7 @@ def getFileSize(url):
     #Param   :   url    [in] 链接           
     #Return  :   Err:-1     
     """
-    if sys.version_info > (2, 7):
+    if sys.version_info > (3, 0):
         from urllib.request import urlopen
     else:
         from urllib2 import urlopen
@@ -70,7 +70,7 @@ def downloadFile(url, fileName, stimeout=None):
     #Param   :   fileName   [in] 文件路径              
     #Return  :   True/False            
     """
-    if sys.version_info > (2, 7):
+    if sys.version_info > (3,0):
         from urllib.request import urlopen
     else:
         from urllib2 import urlopen
@@ -111,4 +111,5 @@ def getIpStatus(host, port, timeouts=1):
     return flag
 
 
-
+# bo = downloadFile('http://down.2zzt.com/uploads/cu/cu2.3.zip', 'e:\\1.zip')
+# t = 1

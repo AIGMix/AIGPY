@@ -9,6 +9,7 @@
 @Desc    :   
 '''
 import os
+import sys
 from mutagen import File
 from mutagen import flac
 from mutagen import mp4
@@ -18,11 +19,21 @@ def _getHash(pHash, key):
     if key in pHash:
         return pHash[key]
     return ''
-    
+
+def _lower(input):
+    if isinstance(input,str):
+        input = input.decode('utf-8')
+    input = input.lower().encode('utf-8')
+    return input
+
 def _getExtension(filepath):
     index = filepath.rfind('.')
     ret = filepath[index + 1:len(filepath)]
-    return str.lower(ret)
+    v = sys.version_info
+    if v[0] > 2:
+        return str.lower(ret)
+    else:
+        return _lower(ret)
 
 def _getFileData(filepath):
     try:
@@ -116,15 +127,15 @@ class TagTool(object):
         return True
     
     def _saveMp4(self, coverPath):
-        self._handle.tags['©nam'] = self.title
-        self._handle.tags['©alb'] = self.album
+        self._handle.tags['\xa9nam'] = self.title
+        self._handle.tags['\xa9alb'] = self.album
         self._handle.tags['aART'] = _getArrayStr(self.albumartist)
-        self._handle.tags['©ART'] = _getArrayStr(self.artist)
+        self._handle.tags['\xa9ART'] = _getArrayStr(self.artist)
         self._handle.tags['cprt'] = self.copyright
         self._handle.tags['trkn'] = [[_tryInt(self.tracknumber), _tryInt(self.totaltrack)]]
         self._handle.tags['disk'] = [[_tryInt(self.discnumber), _tryInt(self.totaldisc)]]
-        self._handle.tags['©gen'] = self.genre
-        self._handle.tags['©day'] = self.date
+        self._handle.tags['\xa9gen'] = self.genre
+        self._handle.tags['\xa9day'] = self.date
         self._savePic(coverPath)
         self._handle.save()
         return True
@@ -144,6 +155,7 @@ class TagTool(object):
             pic = mp4.MP4Cover(data)
             self._handle.tags['covr'] = [pic]
 
+
 # test = TagTool('e:\\1.m4a')
 # test.album = ['ff']
 # test.albumartist = ['yaron', 'f']
@@ -154,4 +166,9 @@ class TagTool(object):
 # test.genre = 'fdsa'
 # test.date = '2019-2-3'
 # test.save('e:\\1.jpg')
+# y =str.lower("Ye")
+
+# t = str("Ye").lower()
+# a = o
+
 

@@ -14,5 +14,6 @@ pip uninstall -y aigpy
 REM install 
 python setup.py install
 
+
 REM upload to pip
 twine upload dist/*

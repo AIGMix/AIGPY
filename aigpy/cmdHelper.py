@@ -38,7 +38,11 @@ def myinput(desc):
     if v[0] > 2:
         return input(desc)
     else:
-        return raw_input(desc)
+        ret = raw_input(desc)
+        if len(ret) > 0:
+            if '\r' == ret[len(ret)-1:]:
+                ret = ret[:len(ret)-1]
+        return ret
 
 def myprintNoEnter(desc):
     sys.stdout.write(desc)
@@ -200,4 +204,5 @@ def showTable(columns, rows, colsColor=None, rowsColor=None):
     except:
         return False
 
-
+# f = myinput('tt')
+# g = 0
