@@ -13,7 +13,7 @@ import sys
 from mutagen import File
 from mutagen import flac
 from mutagen import mp4
-from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TOPE, TCON
+from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TOPE, TCON, TCOM
 
 def _getHash(pHash, key):
     if key in pHash:
@@ -61,6 +61,12 @@ def _getArrayStr(array):
         ret += ';' + item
     return ret
 
+def _noneToEmptyString(obj):
+    if obj is None:
+        return ''
+    else:
+        return obj
+
 class TagTool(object):
     def __init__(self, filePath):
         if os.path.isfile(filePath) is False:
@@ -81,6 +87,7 @@ class TagTool(object):
         self.totaldisc = ''
         self.genre = ''
         self.date = ''
+        self.composer = ''
 
     def save(self, coverPath=None):
         try:
@@ -104,6 +111,7 @@ class TagTool(object):
         # self._handle.tags.add(TRCK(encoding=3, text=self.discnum))
         self._handle.tags.add(TCON(encoding=3, text=self.genre))
         self._handle.tags.add(TDRC(encoding=3, text=self.date))
+        self._handle.tags.add(TCOM(encoding=3, text=self.composer))
         self._savePic(coverPath)
         self._handle.save()
         return True
@@ -115,13 +123,14 @@ class TagTool(object):
         self._handle.tags['album'] = self.album
         self._handle.tags['albumartist'] = self.albumartist
         self._handle.tags['artist'] = self.artist
-        self._handle.tags['copyright'] = self.copyright
+        self._handle.tags['copyright'] = _noneToEmptyString(self.copyright)
         self._handle.tags['tracknumber'] = str(self.tracknumber)
         self._handle.tags['tracktotal'] = str(self.totaltrack)
         self._handle.tags['discnumber'] = str(self.discnumber)
         self._handle.tags['disctotal'] = str(self.totaldisc)
-        self._handle.tags['genre'] = self.genre
-        self._handle.tags['date'] = self.date
+        self._handle.tags['genre'] = _noneToEmptyString(self.genre)
+        self._handle.tags['date'] = _noneToEmptyString(self.date)
+        self._handle.tags['composer'] = _noneToEmptyString(self.composer)
         self._savePic(coverPath)
         self._handle.save()
         return True
@@ -131,11 +140,12 @@ class TagTool(object):
         self._handle.tags['\xa9alb'] = self.album
         self._handle.tags['aART'] = _getArrayStr(self.albumartist)
         self._handle.tags['\xa9ART'] = _getArrayStr(self.artist)
-        self._handle.tags['cprt'] = self.copyright
+        self._handle.tags['cprt'] = _noneToEmptyString(self.copyright)
         self._handle.tags['trkn'] = [[_tryInt(self.tracknumber), _tryInt(self.totaltrack)]]
         self._handle.tags['disk'] = [[_tryInt(self.discnumber), _tryInt(self.totaldisc)]]
-        self._handle.tags['\xa9gen'] = self.genre
-        self._handle.tags['\xa9day'] = self.date
+        self._handle.tags['\xa9gen'] = _noneToEmptyString(self.genre)
+        self._handle.tags['\xa9day'] = _noneToEmptyString(self.date)
+        self._handle.tags['\xa9wrt'] = _noneToEmptyString(self.composer)
         self._savePic(coverPath)
         self._handle.save()
         return True
@@ -155,12 +165,11 @@ class TagTool(object):
             pic = mp4.MP4Cover(data)
             self._handle.tags['covr'] = [pic]
 
-
 # test = TagTool('e:\\1.m4a')
 # test.album = ['ff']
 # test.albumartist = ['yaron', 'f']
 # test.artist = ['huang', 'dd']
-# test.copyright = 'fasd'
+# test.copyright = None
 # test.title = 'yes'
 # test.tracknumber = '1'
 # test.genre = 'fdsa'

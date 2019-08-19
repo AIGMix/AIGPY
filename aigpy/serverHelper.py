@@ -55,16 +55,16 @@ class ServerTool(object):
         while True:
             sock, addr = self.__sockHandle.accept()
             self.__requestThread.addWork(self.__requestThreadCall__, *(sock, addr))
-
+        self.start()
     def start(self, address, port, requestFuc=None, listenNum=10, recieveLen=1024):
         """
-        #Func    :   启动       
-        #Param   :   address    [in] ip地址     
-        #Param   :   port       [in] 端口号     
-        #Param   :   requestFuc [in] 响应函数,参数为httpRequest,返回body        
-        #Param   :   listenNum  [in] 监听的数量     
-        #Param   :   recieveLen [in] 数据包的长度       
-        #Return  :   True/False         
+        #Func    :   启动
+        #Param   :   address    [in] ip地址 
+        #Param   :   port       [in] 端口号
+        #Param   :   requestFuc [in] 响应函数,参数为httpRequest,返回body     
+        #Param   :   listenNum  [in] 监听的数量
+        #Param   :   recieveLen [in] 数据包的长度
+        #Return  :   True/False   
         """
         try:
             self.stop()

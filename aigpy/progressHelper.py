@@ -14,33 +14,42 @@ import time
 import threading
 
 class ProgressTool(object):
-    def __init__(self, maxCount, barLength=50, icon='▓'):
+    def __init__(self, maxCount, barLength=50, icon='▓', unit='', desc=''):
         self.curCount  = 0                  #当前计数
         self.maxCount  = maxCount           #最大数量
         self.barLength = barLength          #进度条长度
         self.icon      = icon               #进度符号
         self.mutex     = threading.Lock()   #互斥锁
+        self.end       = 0
+        self.unit      = unit
+        self.desc      = ''
+        if len(desc) > 0:
+            self.desc = '(' + desc + ')'
 
     def reset(self, maxCount):
         if self.mutex.acquire():
             self.curCount = 0  
             self.maxCount = maxCount  
+            self.end      = 0
             self.mutex.release()
 
     def setCurCount(self, curCount):
         if self.mutex.acquire():
-            if curCount >= self.maxCount:
-                curCount = self.maxCount
-            self.curCount = self.maxCount
-            self._show()
+            if self.end == 0:
+                if curCount >= self.maxCount:
+                    curCount = self.maxCount
+                    self.end = 1
+                self.curCount = curCount
+                self._show()
             self.mutex.release()
 
     def step(self):
         if self.mutex.acquire():
-            if self.curCount >= self.maxCount:
-                return
-            self.curCount += 1
-            self._show()
+            if self.end == 0 and self.curCount < self.maxCount:
+                self.curCount += 1
+                self._show()
+            else:
+                self.end = 1
             self.mutex.release()
 
     def _show(self):
@@ -51,7 +60,10 @@ class ProgressTool(object):
         #计算百分比
         percent = self.curCount * 100.0 / self.maxCount  
         #输出字符串
-        process = '%3d' % percent + '%|' + self.icon*numBlock + ' '*numEmpty + '| ' + str(self.curCount) + '/' + str(self.maxCount) 
+        process = '%3d' % percent + '%|' + self.icon*numBlock + ' '*numEmpty + '| ' + \
+            str(round(self.curCount, 2)) + '/' + \
+            str(round(self.maxCount, 2)) + ' ' + self.unit + self.desc
+
         #判断是否要换行
         if self.curCount < self.maxCount:
             process += '\r'

@@ -13,7 +13,10 @@
 import sys
 import requests
 import json
+from aigpy.progressHelper import ProgressTool
 from socket import *
+from aigpy.convertHelper import convertStorageUnit
+from aigpy.pathHelper import getFileName
 
 def downloadString(url, timeouts=(3.05, 27)):
     """
@@ -63,7 +66,7 @@ def getFileSize(url):
     except:
         return -1
 
-def downloadFile(url, fileName, stimeout=None):
+def downloadFile(url, fileName, stimeout=None, showprogress=False):
     """
     #Func    :   下载文件              
     #Param   :   url        [in] 链接       
@@ -80,11 +83,23 @@ def downloadFile(url, fileName, stimeout=None):
             response = urlopen(url)
         else:
             response = urlopen(url, timeout=stimeout)
+        
+        unit = 'mb'
+        if convertStorageUnit(response.length, 'byte', unit) < 1:
+            unit = 'kb'
+        progress = None
+        if showprogress:
+            desc = getFileName(fileName)
+            progress = ProgressTool(convertStorageUnit(response.length, 'byte', unit), 10, unit=unit, desc=desc)
 
+        curcount  = 0
         chunksize = 16 * 1024
         with open(fileName, 'wb') as f:
             while True:
                 chunk = response.read(chunksize)
+                curcount += len(chunk)
+                if progress:
+                    progress.setCurCount(convertStorageUnit(curcount, 'byte', unit))
                 if not chunk:
                     break
                 f.write(chunk)
@@ -111,5 +126,4 @@ def getIpStatus(host, port, timeouts=1):
     return flag
 
 
-# bo = downloadFile('http://down.2zzt.com/uploads/cu/cu2.3.zip', 'e:\\1.zip')
-# t = 1
+
