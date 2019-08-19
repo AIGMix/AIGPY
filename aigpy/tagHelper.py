@@ -14,6 +14,7 @@ from mutagen import File
 from mutagen import flac
 from mutagen import mp4
 from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TOPE, TCON, TCOM
+from aigpy import pathHelper
 
 def _getHash(pHash, key):
     if key in pHash:
@@ -51,6 +52,8 @@ def _tryInt(obj):
         return 0
 
 def _getArrayStr(array):
+    if array is None:
+        return ''
     if len(array) <= 0:
         return array
     ret = None
@@ -145,7 +148,7 @@ class TagTool(object):
         self._handle.tags['disk'] = [[_tryInt(self.discnumber), _tryInt(self.totaldisc)]]
         self._handle.tags['\xa9gen'] = _noneToEmptyString(self.genre)
         self._handle.tags['\xa9day'] = _noneToEmptyString(self.date)
-        self._handle.tags['\xa9wrt'] = _noneToEmptyString(self.composer)
+        self._handle.tags['\xa9wrt'] = _getArrayStr(self.composer)
         self._savePic(coverPath)
         self._handle.save()
         return True
@@ -157,6 +160,8 @@ class TagTool(object):
         if 'flac' in self._ext:    
             pic = flac.Picture()
             pic.data = data
+            if pathHelper.getFileExtension(coverPath) == '.jpg':
+                pic.mime = u"image/jpeg"
             self._handle.clear_pictures()
             self._handle.add_picture(pic)
         if 'mp3' in self._ext:
