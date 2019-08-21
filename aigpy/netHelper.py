@@ -66,7 +66,7 @@ def getFileSize(url):
     except:
         return -1
 
-def downloadFile(url, fileName, stimeout=None, showprogress=False):
+def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False):
     """
     #Func    :   下载文件              
     #Param   :   url        [in] 链接       
@@ -92,9 +92,13 @@ def downloadFile(url, fileName, stimeout=None, showprogress=False):
             desc = getFileName(fileName)
             progress = ProgressTool(convertStorageUnit(response.length, 'byte', unit), 10, unit=unit, desc=desc)
 
+        mode ='wb'
+        if append:
+            mode = 'ab'
+
         curcount  = 0
         chunksize = 16 * 1024
-        with open(fileName, 'wb') as f:
+        with open(fileName, mode) as f:
             while True:
                 chunk = response.read(chunksize)
                 curcount += len(chunk)
