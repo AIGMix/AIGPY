@@ -10,11 +10,12 @@
 @Desc    :   
 '''
 
+import os
 import sys
-import requests
 import json
+import socket
+import requests
 from aigpy.progressHelper import ProgressTool
-from socket import *
 from aigpy.convertHelper import convertStorageUnit
 from aigpy.pathHelper import getFileName
 
@@ -66,6 +67,26 @@ def getFileSize(url):
     except:
         return -1
 
+
+def downloadFileByUrls(urlArray, fileName, stimeout=None, showprogress=False):
+    if os.access(fileName, 0):
+        os.remove(fileName)
+
+    progress = None
+    if showprogress:
+        desc = getFileName(fileName)
+        progress = ProgressTool(len(urlArray), 10, unit='', desc=desc)
+
+    curcount = 1    
+    for item in urlArray:
+        ret = downloadFile(item, fileName, stimeout, False,True)
+        if ret != True:
+            return False
+        if progress:
+            progress.setCurCount(curcount)
+            curcount+=1
+    return True
+
 def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False):
     """
     #Func    :   下载文件              
@@ -79,7 +100,7 @@ def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False)
         from urllib2 import urlopen
     
     try:
-        if timeout is None:
+        if stimeout is None:
             response = urlopen(url)
         else:
             response = urlopen(url, timeout=stimeout)
@@ -119,15 +140,12 @@ def getIpStatus(host, port, timeouts=1):
     #Param   :   timeouts    [in] 超时       
     #Return  :   True/False       
     """
-    setdefaulttimeout(timeouts)
+    socket.setdefaulttimeout(timeouts)
     flag = True
     try:
-        s = socket(AF_INET, SOCK_STREAM)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((host, port))
         s.close()
     except:
         flag = False
     return flag
-
-
-

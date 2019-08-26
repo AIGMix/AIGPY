@@ -13,11 +13,6 @@ import os
 import zipfile
 import tarfile
 
-"""
-#Func    :   Get zip type
-#Param   :   para-zip object
-#Return  :   0:filepath 1:dir 2:filepathlist
-"""
 def _getParaType(para):
     try:
         if os.path.isfile(para):
@@ -62,7 +57,7 @@ def _write(pZip, ptype, pfilename, parcname):
         return False
 
 
-def zip(para, zipName):
+def myzip(para, zipName):
     """
     #Func    :   zip files or dir       
     #Param   :   para      file | file[] | dir      
@@ -90,13 +85,7 @@ def zip(para, zipName):
     except:
         return False
 
-def unzip(zipName, outPath):
-    """
-    #Func    :   解压缩     
-    #Param   :   zipName [in]  压缩包名字       
-    #Param   :   outPath [in]  输出目录            
-    #Return  :   True/False 
-    """
+def myunzip(zipName, outPath):
     ptype = _getZipType(zipName)
     try:
         pZip = _open(zipName, ptype, 'r')
@@ -105,4 +94,3 @@ def unzip(zipName, outPath):
         return True
     except:
         return False
-

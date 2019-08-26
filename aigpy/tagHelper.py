@@ -13,7 +13,7 @@ import sys
 from mutagen import File
 from mutagen import flac
 from mutagen import mp4
-from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TOPE, TCON, TCOM
+from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TCON, TCOM
 from aigpy import pathHelper
 
 def _getHash(pHash, key):
@@ -21,11 +21,11 @@ def _getHash(pHash, key):
         return pHash[key]
     return ''
 
-def _lower(input):
-    if isinstance(input,str):
-        input = input.decode('utf-8')
-    input = input.lower().encode('utf-8')
-    return input
+def _lower(inputs):
+    if isinstance(inputs, str):
+        inputs = inputs.decode('utf-8')
+    inputs = inputs.lower().encode('utf-8')
+    return inputs
 
 def _getExtension(filepath):
     index = filepath.rfind('.')
@@ -184,5 +184,3 @@ class TagTool(object):
 
 # t = str("Ye").lower()
 # a = o
-
-

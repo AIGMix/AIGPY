@@ -28,4 +28,3 @@ if __name__ == '__main__':
     print("\033[0;37;40m\tHello World\033[0m")  # 白色
 
 
- metaflac --import-picture-from=cover.jpg music.flac 
