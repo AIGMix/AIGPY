@@ -43,3 +43,14 @@ def getFileContent(path, isBin = False):
         return content
     except:
         return ""
+
+def write(path, content, mode):
+    try:
+        with open(path, mode) as fd:
+            fd.write(content)
+        return True
+    except Exception as e:
+        return False
+
+
+

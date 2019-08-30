@@ -10,6 +10,7 @@
 @Desc    :   
 '''
 
+import re
 import os
 import sys
 import json
@@ -149,3 +150,16 @@ def getIpStatus(host, port, timeouts=1):
     except:
         flag = False
     return flag
+
+def getIP():
+    text = requests.get("http://txt.go.sohu.com/ip/soip").text
+    ip = re.findall(r'\d+.\d+.\d+.\d+', text)[0]
+    return ip
+
+def getResult(code=0,msg='',data=''):
+    ret = {}
+    ret['code']   = code
+    ret['errmsg'] = msg
+    ret['data']   = data
+    return json.dumps(ret)
+

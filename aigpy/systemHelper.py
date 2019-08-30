@@ -11,6 +11,9 @@
 '''
 import os
 import platform
+import subprocess
+import requests
+
 
 def getOwnPath(in__file__):
     """获取进程基本目录"""
@@ -84,3 +87,12 @@ def killProcess(proid):
     except:
         return False
 
+def openPort(port):
+    cmds = [
+        "iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport " + str(port) + " -j ACCEPT",
+        "iptables -I INPUT -m state --state NEW -m udp -p udp --dport " + str(port) + " -j ACCEPT",
+        "ip6tables -I INPUT -m state --state NEW -m tcp -p tcp --dport " + str(port) + " -j ACCEPT",
+        "ip6tables -I INPUT -m state --state NEW -m udp -p udp --dport " + str(port) + " -j ACCEPT"
+    ]
+    for item in cmds:
+        subprocess.call(item, shell=False)
