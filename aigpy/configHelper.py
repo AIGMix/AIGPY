@@ -95,3 +95,26 @@ def SetValue(section, key, value, fileName):
     except:
         return False
 
+
+def ParseNoEqual(fileName):
+    ret = {}
+    try:
+        fd  = open(fileName, 'r')
+        arr = fd.readlines()
+        group = None
+        for item in arr:
+            item = item.strip()
+            if len(item) <= 0:
+                continue
+            if item[0] == '#':
+                continue
+            elif item[0] == '[' and item[len(item) - 1] == ']':
+                group = item[1:len(item) - 1]
+                ret[group] = []
+            elif group == None:
+                continue
+            else:
+                ret[group].append(item)
+        return ret     
+    except:
+        return ret

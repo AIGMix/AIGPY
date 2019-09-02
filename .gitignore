@@ -106,3 +106,7 @@ venv.bak/
 test.py
 /exe
 /test
+test.ini
+.vscode/launch.json
+.vscode/settings.json
+tmp/pdfHelper.py
