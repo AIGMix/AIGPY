@@ -96,6 +96,23 @@ class FFmpegTool(object):
                 pathHelper.remove(filename)
         return False
 
+    def mergerByM3u8_Multithreading2(self, url, filepath, showprogress=False, showshell=False):
+        try:
+            # Get urllist
+            urllist = self.__parseM3u8(url)
+            if len(urllist) <= 0:
+                return False
+
+            ext    = pathHelper.getFileExtension(filepath)
+            tspath = filepath.replace(ext, '.ts')
+            bRet = netHelper.downloadFileByUrls(urllist, tspath, 30, True)
+            if bRet:
+                bRet = self.covertFile(tspath, filepath)
+            pathHelper.remove(tspath)
+            return bRet
+        except:
+            return False
+
     def mergerByM3u8_Multithreading(self, url, filepath, showprogress=False, showshell=False):
         """
         #Func    :   多线程下载并合并文件(使用M3u8的url)        
