@@ -105,11 +105,13 @@ class FFmpegTool(object):
 
             ext    = pathHelper.getFileExtension(filepath)
             tspath = filepath.replace(ext, '.ts')
-            bRet = netHelper.downloadFileByUrls(urllist, tspath, 30, True)
-            if bRet:
-                bRet = self.covertFile(tspath, filepath)
             pathHelper.remove(tspath)
-            return bRet
+            if not netHelper.downloadFileByUrls(urllist, tspath, 30, True):
+                return False
+            if self.covertFile(tspath, filepath):
+                pathHelper.remove(tspath)
+                return True
+            return False
         except:
             return False
 
