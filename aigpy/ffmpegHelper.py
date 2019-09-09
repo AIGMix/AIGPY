@@ -186,12 +186,12 @@ class FFmpegTool(object):
         
         exten   = pathHelper.getFileExtension(filepath)
         tmppath = filepath.replace(exten, '.ts')
-        if systemHelper.isLinux():
-            srcDir += '/*.ts'
-            cmd = 'cat ' + srcDir + ' > "' + tmppath + '"'
-        else:
+        if systemHelper.isWindows():
             srcDir += '\\*.ts'
             cmd = 'copy /b "' + srcDir + '" "' + tmppath + '"'
+        else:
+            srcDir += '/*.ts'
+            cmd = 'cat ' + srcDir + ' > "' + tmppath + '"'
         
         ret = self.__process(cmd, 3, showshell, tmppath)
         if ret is True:
