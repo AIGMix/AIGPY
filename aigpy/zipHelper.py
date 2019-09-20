@@ -10,8 +10,9 @@
 '''
 
 import os
-import zipfile
 import tarfile
+import zipfile
+
 
 def _getParaType(para):
     try:
@@ -26,6 +27,7 @@ def _getParaType(para):
         pass
     return 2
 
+
 def _getZipType(zipName):
     try:
         name = os.path.basename(zipName)
@@ -36,6 +38,7 @@ def _getZipType(zipName):
     except:
         pass
 
+
 def _open(zipName, ptype, mode='w'):
     try:
         if ptype == 'tar':
@@ -45,6 +48,7 @@ def _open(zipName, ptype, mode='w'):
         return pZip
     except:
         return None
+
 
 def _write(pZip, ptype, pfilename, parcname):
     try:
@@ -66,7 +70,7 @@ def myzip(para, zipName):
     """
     check = _getParaType(para)
     ptype = _getZipType(zipName)
-    try: 
+    try:
         pZip = _open(zipName, ptype)
         if check == 2:
             for file in para:
@@ -79,11 +83,13 @@ def myzip(para, zipName):
                 fpath = dirpath.replace(name, '')
                 fpath = fpath and fpath + os.sep or ''
                 for filename in filenames:
-                    pZip._write(pZip, ptype, os.path.join(dirpath, filename), fpath +filename)
+                    pZip._write(pZip, ptype, os.path.join(
+                        dirpath, filename), fpath + filename)
         pZip.close()
         return True
     except:
         return False
+
 
 def myunzip(zipName, outPath):
     ptype = _getZipType(zipName)
@@ -94,3 +100,4 @@ def myunzip(zipName, outPath):
         return True
     except:
         return False
+

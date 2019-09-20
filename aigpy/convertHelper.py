@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 def convertStorageUnit(num, srcUnit, desUnit):
-    """
-    #Func    :   存储单位转换               
-    #Param   :   num        [in]   数字              
-    #Param   :   srcUnit    [in]   来源单位(gb/mb/kb/byte)          
-    #Param   :   desUnit    [in]   目标单位(gb/mb/kb/byte)                    
-    #Return  :   None:Err 
+    """Convert unit
+
+    - num: value
+    - srcUnit: gb/mb/kb/byte
+    - desUnit: gb/mb/kb/byte
     """
     try:
         units = ['gb','mb','kb','byte']
@@ -34,10 +33,10 @@ def convertStorageUnit(num, srcUnit, desUnit):
         return None
 
 def convertStorageUnitToString(num, srcUnit):
-    """
-    #Func    :   将存储单位转为字符串           
-    #Param   :   num       [in] 值     
-    #Param   :   srcUnit   [in] 单位     
+    """Convert unit to string
+    
+    - num: value
+    - srcUnit: gb/mb/kb/byte
     """
     try:
         units = ['gb', 'mb', 'kb', 'byte']

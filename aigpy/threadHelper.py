@@ -22,7 +22,6 @@ class ThreadTool(object):
         self.thread  = ThreadPoolExecutor(max_workers=maxThreadNum)
         
     def start(self, function, *args, **kwargs):
-        """启动线程"""
         if(len(args) > 0 and len(kwargs) > 0):
             handle = self.thread.submit(function, *args, **kwargs)
         elif len(args) > 0:
@@ -36,21 +35,18 @@ class ThreadTool(object):
         return handle
 
     def isFinish(self, handle):
-        """线程是否结束"""
         return handle.done()
 
     def getResult(self, handle):
-        """获取线程结果"""
         return handle.result()
 
     def waitAll(self):
-        """等待全部线程结束"""
+        
         for future in as_completed(self.allTask):
             data = future.result()
         # wait(self.allTask, return_when=ALL_COMPLETED)
 
     def waitAnyone(self):
-        """等待任何一个线程技术"""
         as_completed(self.allTask)
     
     def close(self):
@@ -67,8 +63,8 @@ class ThreadPoolManger(object):
             import Queue
             self.work_queue = Queue.Queue()
 
-        self.allTask    = []
-        self.thread     = ThreadPoolExecutor(max_workers=maxThreadNum)
+        self.allTask = []
+        self.thread = ThreadPoolExecutor(max_workers=maxThreadNum)
         for i in range(maxThreadNum):
             handle = self.thread.submit(self.__workThread__)
             self.allTask.append(handle)
@@ -84,4 +80,3 @@ class ThreadPoolManger(object):
     
     def close(self):
         self.thread.shutdown(False)
-

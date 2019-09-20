@@ -12,12 +12,6 @@
 
 
 def isChinese(word, checkPunctuation = False):
-    """
-    #Func    :   判断字符串是否单纯为中文           
-    #Param   :   word               字符串          
-    #Param   :   checkPunctuation   检查标点符号            
-    #Return  :   True/False 
-    """
     punctuationStr = '，。！？【】（）％＃＠＆１２３４５６７８９０：'
     for ch in word:
         if '\u4e00' <= ch <= '\u9fff':
@@ -28,11 +22,6 @@ def isChinese(word, checkPunctuation = False):
 
 
 def converPunctuationToEnglish(word):
-    """
-    #Func    :   将中文标点字符转为英文         
-    #Param   :   word   字符串          
-    #Return  :   字符串         
-    """
     table = {ord(f): ord(t) for f, t in zip(
         u'，。！？【】（）％＃＠＆１２３４５６７８９０：',
         u',.!?[]()%#@&1234567890:')}
@@ -41,13 +30,6 @@ def converPunctuationToEnglish(word):
 
 
 def align(string, num, isLeft=True):
-    """
-    #Func    :   字符串对齐         
-    #Param   :   string     字符串          
-    #Param   :   num        对齐宽度            
-    #Param   :   isLeft     是否左对齐          
-    #Return  :   字符串         
-    """
     leng = 0
     for c in string:
         leng += 1

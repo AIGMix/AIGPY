@@ -21,12 +21,6 @@ from aigpy.convertHelper import convertStorageUnit
 from aigpy.pathHelper import getFileName
 
 def downloadString(url, timeouts=(3.05, 27)):
-    """
-    #Func    :   下载字符串        
-    #Param   :   url        [in] 链接       
-    #Param   :   timeouts   [in] 超时             
-    #Return  :   Err:None              
-    """
     try:
         re = requests.get(url, timeouts)
         return re.content
@@ -35,12 +29,6 @@ def downloadString(url, timeouts=(3.05, 27)):
     
 
 def downloadJson(url, timeouts=(3.05, 27)):
-    """
-    #Func    :   下载json   
-    #Param   :   url        [in] 链接       
-    #Param   :   timeouts   [in] 超时       
-    #Return  :   Err:None       
-    """
     try:
         re = requests.get(url, timeouts)
         info = json.loads(re.content)
@@ -49,11 +37,6 @@ def downloadJson(url, timeouts=(3.05, 27)):
         return None
 
 def getFileSize(url):
-    """
-    #Func    :   获取文件大小       
-    #Param   :   url    [in] 链接           
-    #Return  :   Err:-1     
-    """
     if sys.version_info > (3, 0):
         from urllib.request import urlopen
     else:
@@ -80,7 +63,7 @@ def downloadFileByUrls(urlArray, fileName, stimeout=None, showprogress=False):
 
     curcount = 1    
     for item in urlArray:
-        ret = downloadFile(item, fileName, stimeout, False,True)
+        ret = downloadFile(item, fileName, stimeout, False, append=True)
         if ret != True:
             return False
         if progress:
@@ -88,13 +71,8 @@ def downloadFileByUrls(urlArray, fileName, stimeout=None, showprogress=False):
             curcount+=1
     return True
 
+
 def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False):
-    """
-    #Func    :   下载文件              
-    #Param   :   url        [in] 链接       
-    #Param   :   fileName   [in] 文件路径              
-    #Return  :   True/False            
-    """
     if sys.version_info > (3,0):
         from urllib.request import urlopen
     else:
@@ -133,14 +111,8 @@ def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False)
     except:
         return False
 
+
 def getIpStatus(host, port, timeouts=1):
-    """
-    #Func    :   测试连接              
-    #Param   :   host        [in] IP地址       
-    #Param   :   port        [in] 端口       
-    #Param   :   timeouts    [in] 超时       
-    #Return  :   True/False       
-    """
     socket.setdefaulttimeout(timeouts)
     flag = True
     try:
@@ -151,10 +123,12 @@ def getIpStatus(host, port, timeouts=1):
         flag = False
     return flag
 
+
 def getIP():
     text = requests.get("http://txt.go.sohu.com/ip/soip").text
     ip = re.findall(r'\d+.\d+.\d+.\d+', text)[0]
     return ip
+
 
 def getResult(code=0,msg='',data=''):
     ret = {}

@@ -12,11 +12,6 @@
 import os
 
 def getFileSize(path):
-    """
-    #Func    :   获取文件大小       
-    #Param   :   path   [in] 文件路径
-    #Return  :   整数       
-    """
     try:
         if os.path.isfile(path) is False:
             return 0
@@ -25,12 +20,6 @@ def getFileSize(path):
         return 0
 
 def getFileContent(path, isBin = False):
-    """
-    #Func    :   获取文件全部内容   
-    #Param   :   path    [in] 文件路径
-    #Param   :   isBin   [in] 是否用二进制读取
-    #Return  :   整数
-    """
     mode = 'r'
     if isBin:
         mode = 'rb'
@@ -51,6 +40,3 @@ def write(path, content, mode):
         return True
     except Exception as e:
         return False
-
-
-

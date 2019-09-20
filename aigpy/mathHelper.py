@@ -8,6 +8,5 @@
 @Contact :   yaronhuang@qq.com
 @Desc    :   Math Common Function
 '''
-# -*- coding:utf-8 -*-
 
 
