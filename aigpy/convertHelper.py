@@ -2,7 +2,6 @@
 
 def convertStorageUnit(num, srcUnit, desUnit):
     """Convert unit
-
     - num: value
     - srcUnit: gb/mb/kb/byte
     - desUnit: gb/mb/kb/byte
@@ -34,7 +33,6 @@ def convertStorageUnit(num, srcUnit, desUnit):
 
 def convertStorageUnitToString(num, srcUnit):
     """Convert unit to string
-    
     - num: value
     - srcUnit: gb/mb/kb/byte
     """

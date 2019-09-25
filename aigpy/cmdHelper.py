@@ -15,6 +15,7 @@ from colorama import init
 
 init(autoreset=True)
 
+
 def isInputYes(inputstr):
     """Return: bool"""
     if inputstr is None:
@@ -48,7 +49,7 @@ def myinputInt(desc, default):
 def myinputFloat(desc, default):
     try:
         stri = myinput(desc)
-        ret  = float(stri)
+        ret = float(stri)
         return ret
     except:
         return default
@@ -61,7 +62,7 @@ def myprintNoEnter(desc):
 def findInArgv(stri):
     if sys.argv is None or len(sys.argv) == 0:
         return None
-    
+
     for item in sys.argv:
         if item == sys.argv[0]:
             continue
@@ -81,23 +82,24 @@ def converArgvToStr(array):
 
 class TextColor(Enum):
     """Font color"""
-    Black  = 30
-    Blue   = 34
-    Green  = 32
-    Red    = 31
+    Black = 30
+    Blue = 34
+    Green = 32
+    Red = 31
     Yellow = 33
-    White  = 37
+    White = 37
+
 
 class BackGroundColor(Enum):
-    Black  = 40
-    Blue   = 44
-    Green  = 42
-    Red    = 41
+    Black = 40
+    Blue = 44
+    Green = 42
+    Red = 41
     Yellow = 43
-    White  = 47
+    White = 47
 
 
-def myprint(desc,textColor=None,bgColor=None):
+def myprint(desc, textColor=None, bgColor=None):
     if textColor is None and bgColor is None:
         sys.stdout.write(desc)
     else:
@@ -106,7 +108,7 @@ def myprint(desc,textColor=None,bgColor=None):
             color = str(textColor.value)
         if bgColor is not None:
             if color != '':
-                color = color +';'
+                color = color + ';'
             color = color + str(bgColor.value)
         color = color + 'm'
         sys.stdout.write("\033[" + color + str(desc) + "\033[0m")
@@ -114,7 +116,6 @@ def myprint(desc,textColor=None,bgColor=None):
 
 def showTable(columns, rows, colheadColor=None, colsColor=[]):
     """Display a table
-    
     - columns: str[y] contains of all columns name
     - rows: str[x][y] table value
     - colheadColor: #TextColor# columns headColor color
@@ -124,7 +125,7 @@ def showTable(columns, rows, colheadColor=None, colsColor=[]):
         # get columns width
         widths = []
         for item in columns:
-            name = str(item)   
+            name = str(item)
             widths.append(len(name))
 
         for rObj in rows:
@@ -135,7 +136,7 @@ def showTable(columns, rows, colheadColor=None, colsColor=[]):
                 index = index + 1
                 if len(widths) <= index:
                     break
-        
+
         boardstr = '-'
         for item in widths:
             for i in range(item + 2 + 1):

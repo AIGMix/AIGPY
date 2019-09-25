@@ -9,9 +9,7 @@
 @Desc    :   
 '''
 
-
-
-def isChinese(word, checkPunctuation = False):
+def isChinese(word, checkPunctuation=False):
     punctuationStr = '，。！？【】（）％＃＠＆１２３４５６７８９０：'
     for ch in word:
         if '\u4e00' <= ch <= '\u9fff':
@@ -45,4 +43,3 @@ def align(string, num, isLeft=True):
         return string + appendStr
     else:
         return appendStr + string
-

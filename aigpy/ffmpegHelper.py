@@ -56,7 +56,7 @@ class FFmpegTool(object):
     def __parseM3u8(self, url):
         content = netHelper.downloadString(url, None)
         pattern = re.compile(r"(?<=http).+?(?=\\n)")
-        plist   = pattern.findall(str(content))
+        plist = pattern.findall(str(content))
         urllist = []
         for item in plist:
             urllist.append("http"+item)

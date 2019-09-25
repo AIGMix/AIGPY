@@ -34,15 +34,18 @@ CONTENT_404 = '''
 
 # 返回码
 class ErrorCode(object):
-    OK        = "HTTP/1.1 200 OK\r\n"
+    OK = "HTTP/1.1 200 OK\r\n"
     NOT_FOUND = "HTTP/1.1 404 Not Found\r\n"
 
 # 将字典转成字符串
+
+
 def dict2str(d):
     s = ''
     for i in d:
         s = s + i+': '+d[i]+'\r\n'
     return s
+
 
 class Session(object):
     def __init__(self):
@@ -81,16 +84,16 @@ class Session(object):
 
 class HttpRequest(object):
     def __init__(self, rootDir, cookieDir, fileOf404=None):
-        self.RootDir       = rootDir
-        self.CookieDir     = cookieDir
-        self.NotFoundHtml  = fileOf404
-        self.method        = None
-        self.url           = None
-        self.protocol      = None
-        self.head          = dict()
-        self.Cookie        = None
-        self.session       = None
-        self.request_data  = dict()
+        self.RootDir = rootDir
+        self.CookieDir = cookieDir
+        self.NotFoundHtml = fileOf404
+        self.method = None
+        self.url = None
+        self.protocol = None
+        self.head = dict()
+        self.Cookie = None
+        self.session = None
+        self.request_data = dict()
         self.response_line = ''      # 错误码
         self.response_head = dict()  # 返回数据类型
         self.response_body = ''      # 返回的数据
@@ -98,7 +101,7 @@ class HttpRequest(object):
     def __readNotFoundHtml__(self):
         try:
             if self.NotFoundHtml is not None:
-                fd  = open(self.NotFoundHtml, 'r')
+                fd = open(self.NotFoundHtml, 'r')
                 ret = fd.read()
                 fd.close()
                 return ret
@@ -109,7 +112,7 @@ class HttpRequest(object):
     def __passRequestLine__(self, request_line):
         header_list = request_line.split(' ')
         self.method = header_list[0].upper()
-        self.url    = header_list[1]
+        self.url = header_list[1]
         if self.url == '/':
             self.url = '/index.html'
         self.protocol = header_list[2]
@@ -127,7 +130,7 @@ class HttpRequest(object):
         if len(request.split('\r\n', 1)) != 2:
             return
         request_line, body = request.split('\r\n', 1)
-        request_head       = body.split('\r\n\r\n', 1)[0]     
+        request_head = body.split('\r\n\r\n', 1)[0]
         self.__passRequestLine__(request_line)
         self.__passRequestHead__(request_head)
         # 所有post视为动态请求
@@ -143,9 +146,9 @@ class HttpRequest(object):
             self.dynamicRequest(self.RootDir + self.url)
         # get如果带参数视为动态请求,不带参数的get视为静态请求
         if self.method == 'GET':
-            if self.url.find('?') != -1:        
+            if self.url.find('?') != -1:
                 self.request_data = {}
-                req   = self.url.split('?', 1)[1]
+                req = self.url.split('?', 1)[1]
                 s_url = self.url.split('?', 1)[0]
                 parameters = req.split('&')
                 for i in parameters:
@@ -157,15 +160,15 @@ class HttpRequest(object):
 
     # 只提供制定类型的静态文件
     def staticRequest(self, path):
-        bIsNotFound =  True
+        bIsNotFound = True
         if os.path.isfile(path):
-            bIsNotFound    = False
+            bIsNotFound = False
             extension_name = os.path.splitext(path)[1]
-            extension_set  = {'.css', '.html', '.js'}
+            extension_set = {'.css', '.html', '.js'}
             if extension_name == '.py':
                 self.dynamicRequest(path)
-            else:    
-                fd  = open(path, 'rb')
+            else:
+                fd = open(path, 'rb')
                 txt = fd.read()
                 fd.close()
                 self.response_line = ErrorCode.OK
@@ -180,7 +183,7 @@ class HttpRequest(object):
             self.response_line = ErrorCode.NOT_FOUND
             self.response_head['Content-Type'] = 'text/html'
             self.response_body = self.__readNotFoundHtml__()
-            
+
     def __processSession__(self):
         self.session = Session()
         # 没有提交cookie，创建cookie
@@ -230,7 +233,7 @@ class HttpRequest(object):
                 m.main.GET = self.request_data
             self.response_body = m.main.app()
             self.response_head['Content-Type'] = 'text/html'
-            self.response_head['Set-Cookie']   = self.Cookie
+            self.response_head['Set-Cookie'] = self.Cookie
 
     def getResponse(self, body=None):
         if body is None:

@@ -12,7 +12,6 @@
 import os
 import platform
 import subprocess
-import requests
 
 
 def getOwnPath(in__file__):
@@ -27,6 +26,7 @@ def isLinux():
     return sysName == "Linux"
 
 def getProcessID(name):
+    """get processid by name"""
     try:
         retid = []
         if isLinux():

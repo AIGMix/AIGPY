@@ -16,16 +16,19 @@ from mutagen import mp4
 from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TCON, TCOM
 from aigpy import pathHelper
 
+
 def _getHash(pHash, key):
     if key in pHash:
         return pHash[key]
     return ''
+
 
 def _lower(inputs):
     if isinstance(inputs, str):
         inputs = inputs.decode('utf-8')
     inputs = inputs.lower().encode('utf-8')
     return inputs
+
 
 def _getExtension(filepath):
     index = filepath.rfind('.')
@@ -36,6 +39,7 @@ def _getExtension(filepath):
     else:
         return _lower(ret)
 
+
 def _getFileData(filepath):
     try:
         with open(filepath, "rb") as f:
@@ -44,12 +48,14 @@ def _getFileData(filepath):
     except:
         return None
 
+
 def _tryInt(obj):
     try:
         ret = int(obj)
         return ret
     except:
         return 0
+
 
 def _getArrayStr(array):
     if array is None:
@@ -64,11 +70,13 @@ def _getArrayStr(array):
         ret += ';' + item
     return ret
 
+
 def _noneToEmptyString(obj):
     if obj is None:
         return ''
     else:
         return obj
+
 
 class TagTool(object):
     def __init__(self, filePath):
@@ -137,7 +145,7 @@ class TagTool(object):
         self._savePic(coverPath)
         self._handle.save()
         return True
-    
+
     def _saveMp4(self, coverPath):
         self._handle.tags['\xa9nam'] = self.title
         self._handle.tags['\xa9alb'] = self.album
@@ -157,7 +165,7 @@ class TagTool(object):
         data = _getFileData(coverPath)
         if data is None:
             return
-        if 'flac' in self._ext:    
+        if 'flac' in self._ext:
             pic = flac.Picture()
             pic.data = data
             if pathHelper.getFileExtension(coverPath) == '.jpg':

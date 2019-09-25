@@ -11,6 +11,7 @@
 
 import os
 
+
 def getFileSize(path):
     try:
         if os.path.isfile(path) is False:
@@ -19,7 +20,8 @@ def getFileSize(path):
     except:
         return 0
 
-def getFileContent(path, isBin = False):
+
+def getFileContent(path, isBin=False):
     mode = 'r'
     if isBin:
         mode = 'rb'
@@ -28,10 +30,11 @@ def getFileContent(path, isBin = False):
         if size <= 0:
             return ""
         with open(path, mode) as fd:
-            content = fd.read(size) 
+            content = fd.read(size)
         return content
     except:
         return ""
+
 
 def write(path, content, mode):
     try:

@@ -1,13 +1,5 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
-@File    :   zipHelper.py
-@Time    :   2019/03/01
-@Author  :   Yaron Huang 
-@Version :   1.0
-@Contact :   yaronhuang@qq.com
-@Desc    :   Zip Tool
-'''
 
 import os
 import tarfile
@@ -15,6 +7,7 @@ import zipfile
 
 
 def _getParaType(para):
+    '''Return 0-file path \\ 1-dir path \\ 2-file paths'''
     try:
         if os.path.isfile(para):
             return 0
@@ -29,6 +22,7 @@ def _getParaType(para):
 
 
 def _getZipType(zipName):
+    '''Return 'tar' or 'zip' '''
     try:
         name = os.path.basename(zipName)
         if name.lower().find('.tar') > 0:
@@ -40,6 +34,7 @@ def _getZipType(zipName):
 
 
 def _open(zipName, ptype, mode='w'):
+    '''Open zip file'''
     try:
         if ptype == 'tar':
             pZip = tarfile.open(zipName, mode)
@@ -61,30 +56,29 @@ def _write(pZip, ptype, pfilename, parcname):
         return False
 
 
-def myzip(para, zipName):
+def myzip(inPath, outPath):
+    """zip files or dir
+
+    - inPath: file path/file paths/dir
+    - zipName: output name
+    - Return: True/False         
     """
-    #Func    :   zip files or dir       
-    #Param   :   para      file | file[] | dir      
-    #Param   :   zipName   outPathName      
-    #Return  :   True/False         
-    """
-    check = _getParaType(para)
-    ptype = _getZipType(zipName)
+    check = _getParaType(inPath)
+    ptype = _getZipType(outPath)
     try:
-        pZip = _open(zipName, ptype)
+        pZip = _open(outPath, ptype)
         if check == 2:
-            for file in para:
+            for file in inPath:
                 pZip._write(pZip, ptype, file, os.path.basename(file))
         if check == 0:
-            pZip._write(pZip, ptype, para, os.path.basename(para))
+            pZip._write(pZip, ptype, inPath, os.path.basename(inPath))
         if check == 1:
-            name = os.path.dirname(para)
-            for dirpath, dirnames, filenames in os.walk(para):
+            name = os.path.dirname(inPath)
+            for dirpath, dirnames, filenames in os.walk(inPath):
                 fpath = dirpath.replace(name, '')
                 fpath = fpath and fpath + os.sep or ''
                 for filename in filenames:
-                    pZip._write(pZip, ptype, os.path.join(
-                        dirpath, filename), fpath + filename)
+                    pZip._write(pZip, ptype, os.path.join(dirpath, filename), fpath + filename)
         pZip.close()
         return True
     except:
@@ -100,4 +94,3 @@ def myunzip(zipName, outPath):
         return True
     except:
         return False
-
