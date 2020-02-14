@@ -67,7 +67,7 @@ def _getArrayStr(array):
         if ret is None:
             ret = item
             continue
-        ret += ';' + item
+        ret += ', ' + item
     return ret
 
 
