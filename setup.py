@@ -8,7 +8,7 @@ else:
 
 setup(
     name = 'aigpy',
-    version='2019.9.20.2',
+    version = '2020.2.28.0',
     license = "MIT Licence",
     description = "Python Common Tool",
 
@@ -16,8 +16,8 @@ setup(
     author_email = "yaronhuang@qq.com",
 
     packages = find_packages(),
-    include_package_data = True,
     platforms = "any",
+    include_package_data = True,
     install_requires=install_requires,
     # entry_points={'console_scripts': [
     #     'tidal-dl = tidal_dl:main', ]}

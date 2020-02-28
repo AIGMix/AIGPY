@@ -13,7 +13,7 @@ import sys
 from mutagen import File
 from mutagen import flac
 from mutagen import mp4
-from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TCON, TCOM
+from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TCON, TCOM, TSRC
 from aigpy import pathHelper
 
 
@@ -99,6 +99,7 @@ class TagTool(object):
         self.genre = ''
         self.date = ''
         self.composer = ''
+        self.isrc = ''
 
     def save(self, coverPath=None):
         try:
@@ -123,6 +124,7 @@ class TagTool(object):
         self._handle.tags.add(TCON(encoding=3, text=self.genre))
         self._handle.tags.add(TDRC(encoding=3, text=self.date))
         self._handle.tags.add(TCOM(encoding=3, text=self.composer))
+        self._handle.tags.add(TSRC(encoding=3, text=self.isrc))
         self._savePic(coverPath)
         self._handle.save()
         return True
@@ -142,6 +144,7 @@ class TagTool(object):
         self._handle.tags['genre'] = _noneToEmptyString(self.genre)
         self._handle.tags['date'] = _noneToEmptyString(self.date)
         self._handle.tags['composer'] = _noneToEmptyString(self.composer)
+        self._handle.tags['isrc'] = str(self.isrc)
         self._savePic(coverPath)
         self._handle.save()
         return True
