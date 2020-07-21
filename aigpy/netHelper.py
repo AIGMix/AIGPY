@@ -73,16 +73,26 @@ def downloadFileByUrls(urlArray, fileName, stimeout=None, showprogress=False):
 
 
 def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False):
+    check, errmsg = downloadFileRetErr(url, fileName, stimeout, showprogress, append)
+    return check
+
+
+def downloadFileRetErr(url, fileName, stimeout=None, showprogress=False, append=False, ignoreCertificate = False):
     if sys.version_info > (3,0):
         from urllib.request import urlopen
     else:
         from urllib2 import urlopen
     
     try:
+        content = None
+        if ignoreCertificate:
+            import ssl
+            content = ssl._create_unverified_context()
+
         if stimeout is None:
-            response = urlopen(url)
+            response = urlopen(url, context=content)
         else:
-            response = urlopen(url, timeout=stimeout)
+            response = urlopen(url, timeout=stimeout, context=content)
         
         unit = 'mb'
         if convertStorageUnit(response.length, 'byte', unit) < 1:
@@ -107,9 +117,9 @@ def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False)
                 if not chunk:
                     break
                 f.write(chunk)
-            return True
-    except:
-        return False
+            return True, None
+    except Exception as e:
+        return False, e
 
 
 def getIpStatus(host, port, timeouts=1):
@@ -136,4 +146,6 @@ def getResult(code=0,msg='',data=''):
     ret['errmsg'] = msg
     ret['data']   = data
     return json.dumps(ret)
+
+
 

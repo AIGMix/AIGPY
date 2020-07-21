@@ -8,12 +8,12 @@ else:
 
 setup(
     name = 'aigpy',
-    version = '2020.2.28.0',
+    version = '2020.7.3.0',
     license = "MIT Licence",
     description = "Python Common Tool",
 
     author = 'YaronH',
-    author_email = "yaronhuang@qq.com",
+    author_email = "yaronhuang@foxmail.com",
 
     packages = find_packages(),
     platforms = "any",

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
+
+
 '''
 @File    :   configHelper.py
 @Time    :   2018/12/17
@@ -10,6 +12,8 @@
 '''
 import os
 import configparser
+from binascii import b2a_hex, a2b_hex
+from Crypto.Cipher import AES
 
 def Count(fileName, section=None):
     """Get para number"""
@@ -38,7 +42,7 @@ def Sections(fileName):
         return None
 
 
-def GetValue(section, key, default, fileName):
+def GetValue(section, key, default, fileName, aesKey=None):
     try:
         cf = configparser.ConfigParser()
         cf.read(fileName)
@@ -47,11 +51,17 @@ def GetValue(section, key, default, fileName):
         
         if key in cf[section]:
             default = cf.get(section, key)
+
+        if aesKey is not None:
+            if default is not None and len(default) > 0:
+                func = AES_FUNC(aesKey)
+                default = func.decrypt(default)
         return default
     except:
         return default
 
-def SetValue(section, key, value, fileName):
+
+def SetValue(section, key, value, fileName, aesKey=None):
     try:
         if os.access(fileName, 0) is False:
             fp = open(fileName, "w")
@@ -62,7 +72,14 @@ def SetValue(section, key, value, fileName):
         if cf.has_section(section) is False:
             cf[section] = {}
 
-        cf[section][key] = value
+        real_value = value
+        if aesKey is not None:
+            if value is not None and len(value) > 0:
+                func = AES_FUNC(aesKey)
+                real_value = func.encrypt(value)
+                real_value = str(real_value, encoding="utf-8")
+
+        cf[section][key] = real_value
         with open(fileName, "w") as f:
             cf.write(f)
         return True
@@ -92,4 +109,40 @@ def ParseNoEqual(fileName):
         return ret     
     except:
         return ret
+
+class AES_FUNC():
+    def __init__(self, key):
+        self.key = key
+        self.mode = AES.MODE_ECB
+        self.AES_LENGTH = 16
+        self.cryptor = AES.new(self.pad_key(self.key).encode(), self.mode)
+
+    # 加密函数，如果text不是16的倍数【加密文本text必须为16的倍数！】，那就补足为16的倍数
+    # 加密内容需要长达16位字符，所以进行空格拼接
+    def pad(self, text):
+        while len(text) % self.AES_LENGTH != 0:
+            text += ' '
+        return text
+
+    # 加密密钥需要长达16位字符，所以进行空格拼接
+    def pad_key(self, key):
+        while len(key) % self.AES_LENGTH != 0:
+            key += ' '
+        return key
+
+    def encrypt(self, text):
+
+        # 这里密钥key 长度必须为16（AES-128）、24（AES-192）、或32（AES-256）Bytes 长度.目前AES-128足够用
+        # 加密的字符需要转换为bytes
+        # print(self.pad(text))
+        self.ciphertext = self.cryptor.encrypt(self.pad(text).encode())
+        # 因为AES加密时候得到的字符串不一定是ascii字符集的，输出到终端或者保存时候可能存在问题
+        # 所以这里统一把加密后的字符串转化为16进制字符串
+        return b2a_hex(self.ciphertext)
+        # 解密后，去掉补足的空格用strip() 去掉
+
+    def decrypt(self, text):
+        plain_text = self.cryptor.decrypt(a2b_hex(text)).decode()
+        return plain_text.rstrip(' ')
+
 
