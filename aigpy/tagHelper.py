@@ -10,11 +10,13 @@
 '''
 import os
 import sys
+import requests
 from mutagen import File
 from mutagen import flac
 from mutagen import mp4
 from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TCON, TCOM, TSRC
 from aigpy import pathHelper
+import aigpy.netHelper as netHelper
 
 
 def _getHash(pHash, key):
@@ -41,6 +43,9 @@ def _getExtension(filepath):
 
 
 def _getFileData(filepath):
+    if 'http' in filepath:
+        re = requests.get(filepath)
+        return re.content
     try:
         with open(filepath, "rb") as f:
             data = f.read()
@@ -171,7 +176,7 @@ class TagTool(object):
         if 'flac' in self._ext:
             pic = flac.Picture()
             pic.data = data
-            if pathHelper.getFileExtension(coverPath) == '.jpg':
+            if '.jpg' in coverPath:
                 pic.mime = u"image/jpeg"
             self._handle.clear_pictures()
             self._handle.add_picture(pic)

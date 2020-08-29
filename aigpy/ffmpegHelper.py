@@ -103,6 +103,9 @@ class FFmpegTool(object):
             if len(urllist) <= 0:
                 return False
 
+            sdir = pathHelper.getDirName(filepath)
+            pathHelper.mkdirs(sdir)
+
             ext    = pathHelper.getFileExtension(filepath)
             tspath = filepath.replace(ext, '.ts')
             pathHelper.remove(tspath)

@@ -42,6 +42,17 @@ class ProgressTool(object):
                 self.curCount = curCount
                 self._show()
             self.mutex.release()
+    
+    def addCurCount(self, addCount):
+        if self.mutex.acquire():
+            if self.end == 0:
+                if self.curCount + addCount >= self.maxCount:
+                    self.curCount = self.maxCount
+                    self.end = 1
+                else:
+                    self.curCount += addCount
+                self._show()
+            self.mutex.release()
 
     def step(self):
         if self.mutex.acquire():

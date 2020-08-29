@@ -99,6 +99,18 @@ class BackGroundColor(Enum):
     White = 47
 
 
+
+def green(text):
+    return "\033[" + str(TextColor.Green.value) + 'm' + str(text) + "\033[0m"
+def blue(text):
+    return "\033[" + str(TextColor.Blue.value) + 'm' + str(text) + "\033[0m"
+def red(text):
+    return "\033[" + str(TextColor.Red.value) + 'm' + str(text) + "\033[0m"
+def yellow(text):
+    return "\033[" + str(TextColor.Yellow.value) + 'm' + str(text) + "\033[0m"
+
+
+
 def myprint(desc, textColor=None, bgColor=None):
     if textColor is None and bgColor is None:
         sys.stdout.write(desc)

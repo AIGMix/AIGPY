@@ -9,6 +9,19 @@
 @Desc    :   
 '''
 
+
+def isNull(word):
+    if word is None or word == "":
+        return True
+    return False
+
+
+def isNotNull(word):
+    if isNull(word):
+        return False
+    return True
+
+
 def isChinese(word, checkPunctuation=False):
     punctuationStr = '，。！？【】（）％＃＠＆１２３４５６７８９０：'
     for ch in word:
@@ -43,3 +56,35 @@ def align(string, num, isLeft=True):
         return string + appendStr
     else:
         return appendStr + string
+
+
+def getSubOnlyStart(string, start):
+    if start not in string:
+        return ""
+    index = string.index(start)
+    return string[index + len(start):]
+
+
+def getSubOnlyEnd(string, end):
+    if end not in string:
+        return ""
+    index = string.index(end)
+    return string[0:index]
+
+
+def getSub(string, start=None, end=None):
+    if start == None and end == None:
+        return string
+    if end == None:
+        return getSubOnlyStart(string, start)
+    if start == None:
+        return getSubOnlyEnd(string, end)
+
+    string = getSubOnlyStart(string, start)
+    if string == "":
+        return ""
+
+    ret = getSubOnlyEnd(string, end)
+    if ret == "":
+        ret = string
+    return ret
