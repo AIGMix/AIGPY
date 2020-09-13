@@ -232,3 +232,22 @@ def downloadFileMultiThread(url, fileName, stimeout=None, showprogress=False, th
         shutil.rmtree(tmpPath)
         threads.close()
         return False, e
+
+
+# import aigpy.convertHelper as AIGConvert
+# import aigpy.netHelper as AIGNet
+# import aigpy.fileHelper as AIGFile
+# import aigpy.stringHelper as AIGString
+
+# fileName = ""
+# outfileName = ""
+# content = AIGFile.getFileContent(fileName)
+# lines = content.split('\n')
+# outLines = ""
+# for item in lines:
+#     size = AIGNet.getFileSize(item)
+#     sizeString = AIGConvert.convertStorageUnitToString(size, 'byte')
+#     print(sizeString)
+#     outLines += '[' + sizeString + '] ' + item + '\n'
+# AIGFile.write(outfileName, outLines, 'w+')
+

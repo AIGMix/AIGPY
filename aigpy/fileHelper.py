@@ -35,6 +35,12 @@ def getFileContent(path, isBin=False):
     except:
         return ""
 
+def getFileLines(path):
+    content = getFileContent(path)
+    if content == "":
+        return []
+    lines = content.split('\n')
+    return lines
 
 def write(path, content, mode):
     try:
@@ -43,3 +49,5 @@ def write(path, content, mode):
         return True
     except Exception as e:
         return False
+
+

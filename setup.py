@@ -8,7 +8,7 @@ else:
 
 setup(
     name = 'aigpy',
-    version = '2020.8.30.1',
+    version = '2020.9.14.0',
     license = "MIT Licence",
     description = "Python Common Tool",
 

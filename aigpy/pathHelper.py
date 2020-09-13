@@ -29,10 +29,13 @@ def mkdirs(path):
     path = path.replace("\\", "/")
     path = path.strip()
     path = path.rstrip("/")
-    if not os.path.exists(path):
-        os.makedirs(path)
-        return True
-    return False
+    try:
+        if not os.path.exists(path):
+            os.makedirs(path)
+            return True
+    except:
+        return False
+    return True
 
 
 def remove(path):
