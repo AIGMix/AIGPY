@@ -3,31 +3,9 @@
 
 import os
 import platform
+
 import aigpy.configHelper as ConfigHelper
 
-
-def getVersion(in_filepath):
-    try:
-        if os.path.isfile(in_filepath) is False:
-            return ""
-        if os.path.exists(in_filepath) is False:
-            return ""
-
-        # get system
-        sysName = platform.system()
-        if sysName == "Windows":
-            import win32api
-            info = win32api.GetFileVersionInfo(in_filepath, os.sep)
-            ms = info['FileVersionMS']
-            ls = info['FileVersionLS']
-            version = '%d.%d.%d.%04d' % (win32api.HIWORD(ms), win32api.LOWORD(ms),
-                                         win32api.HIWORD(ls), win32api.LOWORD(ls))
-            return version
-        if sysName == "Linux":
-            return ""
-        return ""
-    except:
-        return ""
 
 
 def cmpVersion(ver1, ver2):
@@ -47,11 +25,11 @@ def cmpVersion(ver1, ver2):
 
 class VersionFile(object):
     def __init__(self, path=None):
-        self.version = None
-        self.mainFile = None
+        self.version      = None
+        self.mainFile     = None
         self.elseFileList = []
-        self.isZip = 0
-        self.zipFile = ''
+        self.isZip        = 0
+        self.zipFile      = ''
         if path != None:
             self.readFile(path)
 
@@ -106,3 +84,6 @@ class VersionFile(object):
         self.isZip = isZip
         self.zipFile = zipFile
         return True
+
+
+

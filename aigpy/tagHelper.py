@@ -3,9 +3,9 @@
 '''
 @File    :   tagHelper.py
 @Time    :   2019/07/18
-@Author  :   Yaron Huang 
-@Version :   1.0
-@Contact :   yaronhuang@qq.com
+@Author  :   Yaronzz 
+@Version :   2.0
+@Contact :   yaronhuang@foxmail.com
 @Desc    :   
 '''
 import os
@@ -19,30 +19,30 @@ from aigpy import pathHelper
 import aigpy.netHelper as netHelper
 
 
-def _getHash(pHash, key):
+def __getHash__(pHash, key):
     if key in pHash:
         return pHash[key]
     return ''
 
 
-def _lower(inputs):
+def __lower__(inputs):
     if isinstance(inputs, str):
         inputs = inputs.decode('utf-8')
     inputs = inputs.lower().encode('utf-8')
     return inputs
 
 
-def _getExtension(filepath):
+def __getExtension__(filepath):
     index = filepath.rfind('.')
     ret = filepath[index + 1:len(filepath)]
     v = sys.version_info
     if v[0] > 2:
         return str.lower(ret)
     else:
-        return _lower(ret)
+        return __lower__(ret)
 
 
-def _getFileData(filepath):
+def __getFileData__(filepath):
     if 'http' in filepath:
         re = requests.get(filepath)
         return re.content
@@ -54,7 +54,7 @@ def _getFileData(filepath):
         return None
 
 
-def _tryInt(obj):
+def __tryInt__(obj):
     try:
         ret = int(obj)
         return ret
@@ -62,7 +62,7 @@ def _tryInt(obj):
         return 0
 
 
-def _getArrayStr(array):
+def __getArrayStr__(array):
     if array is None:
         return ''
     if len(array) <= 0:
@@ -76,7 +76,7 @@ def _getArrayStr(array):
     return ret
 
 
-def _noneToEmptyString(obj):
+def __noneToEmptyString__(obj):
     if obj is None:
         return ''
     else:
@@ -89,7 +89,7 @@ class TagTool(object):
             return
 
         self._filepath = filePath
-        self._ext = _getExtension(filePath)
+        self._ext = __getExtension__(filePath)
         self._handle = File(filePath)
 
         self.title = ''
@@ -109,16 +109,16 @@ class TagTool(object):
     def save(self, coverPath=None):
         try:
             if 'mp3' in self._ext:
-                return self._saveMp3(coverPath)
+                return self.__saveMp3__(coverPath)
             if 'flac' in self._ext:
-                return self._saveFlac(coverPath)
+                return self.__saveFlac__(coverPath)
             if 'mp4' in self._ext or 'm4a' in self._ext:
-                return self._saveMp4(coverPath)
+                return self.__saveMp4__(coverPath)
             return False
         except:
             return False
 
-    def _saveMp3(self, coverPath):
+    def __saveMp3__(self, coverPath):
         self._handle.tags.add(TIT2(encoding=3, text=self.title))
         self._handle.tags.add(TALB(encoding=3, text=self.album))
         # self._handle.tags.add(TOPE(encoding=3, text=self.albumartist))
@@ -130,47 +130,47 @@ class TagTool(object):
         self._handle.tags.add(TDRC(encoding=3, text=self.date))
         self._handle.tags.add(TCOM(encoding=3, text=self.composer))
         self._handle.tags.add(TSRC(encoding=3, text=self.isrc))
-        self._savePic(coverPath)
+        self.__savePic__(coverPath)
         self._handle.save()
         return True
 
-    def _saveFlac(self, coverPath):
+    def __saveFlac__(self, coverPath):
         if self._handle.tags is None:
             self._handle.add_tags()
         self._handle.tags['title'] = self.title
         self._handle.tags['album'] = self.album
         self._handle.tags['albumartist'] = self.albumartist
         self._handle.tags['artist'] = self.artist
-        self._handle.tags['copyright'] = _noneToEmptyString(self.copyright)
+        self._handle.tags['copyright'] = __noneToEmptyString__(self.copyright)
         self._handle.tags['tracknumber'] = str(self.tracknumber)
         self._handle.tags['tracktotal'] = str(self.totaltrack)
         self._handle.tags['discnumber'] = str(self.discnumber)
         self._handle.tags['disctotal'] = str(self.totaldisc)
-        self._handle.tags['genre'] = _noneToEmptyString(self.genre)
-        self._handle.tags['date'] = _noneToEmptyString(self.date)
-        self._handle.tags['composer'] = _noneToEmptyString(self.composer)
+        self._handle.tags['genre'] = __noneToEmptyString__(self.genre)
+        self._handle.tags['date'] = __noneToEmptyString__(self.date)
+        self._handle.tags['composer'] = __noneToEmptyString__(self.composer)
         self._handle.tags['isrc'] = str(self.isrc)
-        self._savePic(coverPath)
+        self.__savePic__(coverPath)
         self._handle.save()
         return True
 
-    def _saveMp4(self, coverPath):
+    def __saveMp4__(self, coverPath):
         self._handle.tags['\xa9nam'] = self.title
         self._handle.tags['\xa9alb'] = self.album
-        self._handle.tags['aART'] = _getArrayStr(self.albumartist)
-        self._handle.tags['\xa9ART'] = _getArrayStr(self.artist)
-        self._handle.tags['cprt'] = _noneToEmptyString(self.copyright)
-        self._handle.tags['trkn'] = [[_tryInt(self.tracknumber), _tryInt(self.totaltrack)]]
-        self._handle.tags['disk'] = [[_tryInt(self.discnumber), _tryInt(self.totaldisc)]]
-        self._handle.tags['\xa9gen'] = _noneToEmptyString(self.genre)
-        self._handle.tags['\xa9day'] = _noneToEmptyString(self.date)
-        self._handle.tags['\xa9wrt'] = _getArrayStr(self.composer)
-        self._savePic(coverPath)
+        self._handle.tags['aART'] = __getArrayStr__(self.albumartist)
+        self._handle.tags['\xa9ART'] = __getArrayStr__(self.artist)
+        self._handle.tags['cprt'] = __noneToEmptyString__(self.copyright)
+        self._handle.tags['trkn'] = [[__tryInt__(self.tracknumber), __tryInt__(self.totaltrack)]]
+        self._handle.tags['disk'] = [[__tryInt__(self.discnumber), __tryInt__(self.totaldisc)]]
+        self._handle.tags['\xa9gen'] = __noneToEmptyString__(self.genre)
+        self._handle.tags['\xa9day'] = __noneToEmptyString__(self.date)
+        self._handle.tags['\xa9wrt'] = __getArrayStr__(self.composer)
+        self.__savePic__(coverPath)
         self._handle.save()
         return True
 
-    def _savePic(self, coverPath):
-        data = _getFileData(coverPath)
+    def __savePic__(self, coverPath):
+        data = __getFileData__(coverPath)
         if data is None:
             return
         if 'flac' in self._ext:

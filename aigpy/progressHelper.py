@@ -3,9 +3,9 @@
 '''
 @File    :   progressHelper.py
 @Time    :   2018/12/28
-@Author  :   Yaron Huang 
-@Version :   1.0
-@Contact :   yaronhuang@qq.com
+@Author  :   Yaronzz 
+@Version :   2.0
+@Contact :   yaronhuang@foxmail.com
 @Desc    :   Show ProgressBar
 '''
 

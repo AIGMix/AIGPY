@@ -3,9 +3,9 @@
 '''
 @File    :   cmdHelper.py
 @Time    :   2019/02/27
-@Author  :   Yaron Huang 
-@Version :   1.0
-@Contact :   yaronhuang@qq.com
+@Author  :   Yaronzz 
+@Version :   2.0
+@Contact :   yaronhuang@foxmail.com
 @Desc    :   
 '''
 
@@ -27,14 +27,7 @@ def isInputYes(inputstr):
 
 
 def myinput(desc):
-    if sys.version_info[0] > 2:
-        return input(desc)
-    else:
-        ret = raw_input(desc)
-        if len(ret) > 0:
-            if '\r' == ret[len(ret)-1:]:
-                ret = ret[:len(ret)-1]
-        return ret
+    return input(desc)
 
 
 def myinputInt(desc, default):

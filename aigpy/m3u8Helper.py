@@ -3,9 +3,9 @@
 '''
 @File    :   m3u8Helper.py
 @Time    :   2019/08/23
-@Author  :   Yaron Huang 
-@Version :   1.0
-@Contact :   yaronhuang@qq.com
+@Author  :   Yaronzz 
+@Version :   2.0
+@Contact :   yaronhuang@foxmail.com
 @Desc    :   
 '''
 import re
@@ -17,6 +17,7 @@ from aigpy.threadHelper import ThreadTool
 from aigpy.fileHelper import getFileContent
 
 def paresUrl(url):
+    '''Get ts-urls from m3u8-url'''
     content = netHelper.downloadString(url, None)
     pattern = re.compile(r"(?<=http).+?(?=\\n)")
     plist   = pattern.findall(str(content))
@@ -50,6 +51,7 @@ def __merger__(files, filepath):
     
 
 def download(url, descpath, threadnum = 15):
+    '''Download file by m3u8-url'''
     try:
         urllist = paresUrl(url)
         if len(urllist) <= 0:

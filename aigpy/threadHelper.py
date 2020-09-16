@@ -3,11 +3,12 @@
 '''
 @File    :   threadHelper.py
 @Time    :   2018/12/17
-@Author  :   Yaron Huang 
-@Version :   1.0
-@Contact :   yaronhuang@qq.com
+@Author  :   Yaronzz 
+@Version :   2.0
+@Contact :   yaronhuang@foxmail.com
 @Desc    :   Thread Tool 
 '''
+import queue
 import sys
 import threading
 
@@ -53,16 +54,11 @@ class ThreadTool(object):
         self.thread.shutdown(False)
 
 
+
 class ThreadPoolManger(object):
     def __init__(self, maxThreadNum):
         v = sys.version_info
-        if v[0] > 2:
-            import queue
-            self.work_queue = queue.Queue()
-        else:
-            import Queue
-            self.work_queue = Queue.Queue()
-
+        self.work_queue = queue.Queue()
         self.allTask = []
         self.thread = ThreadPoolExecutor(max_workers=maxThreadNum)
         for i in range(maxThreadNum):

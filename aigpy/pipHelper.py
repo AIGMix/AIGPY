@@ -3,9 +3,9 @@
 '''
 @File    :   pipHelper.py
 @Time    :   2019/03/11
-@Author  :   Yaron Huang 
-@Version :   1.0
-@Contact :   yaronhuang@qq.com
+@Author  :   Yaronzz 
+@Version :   2.0
+@Contact :   yaronhuang@foxmail.com
 @Desc    :   pip server tool
 '''
 

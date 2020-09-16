@@ -3,9 +3,9 @@
 '''
 @File    :   fileHelper.py
 @Time    :   2019/03/11
-@Author  :   Yaron Huang 
-@Version :   1.0
-@Contact :   yaronhuang@qq.com
+@Author  :   Yaronzz 
+@Version :   2.0
+@Contact :   yaronhuang@foxmail.com
 @Desc    :   
 '''
 
@@ -50,4 +50,9 @@ def write(path, content, mode):
     except Exception as e:
         return False
 
+def writeLines(path, lines:list, mode):
+    content = ""
+    for item in list:
+        content += item + '\n'
+    return write(path, content, mode)
 
