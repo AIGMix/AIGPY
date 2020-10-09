@@ -184,7 +184,7 @@ def downloadFileMultiThread(url, fileName, stimeout=None, showprogress=False, th
     try:
         filelength = getFileSize(url)
         if filelength <= 0:
-            return False, None
+            return False, "File size = " + str(filelength)
 
         at = 0
        	rangs = []
@@ -202,7 +202,7 @@ def downloadFileMultiThread(url, fileName, stimeout=None, showprogress=False, th
         path = getDirName(fileName)
         tmpPath = getDiffTmpPathName(path)
         if mkdirs(tmpPath) is False:
-            return False, None
+            return False, "Creat tmpdir failed:" + tmpPath;
 
         # thread
         threads = ThreadTool(threadnum)
