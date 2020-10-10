@@ -62,7 +62,6 @@ def copyFile(srcfile, dstfile):
         shutil.copyfile(srcfile, dstfile) 
     return True
 
-
 def replaceLimitChar(path, newChar):
     if path is None:
         return ""
@@ -77,6 +76,19 @@ def replaceLimitChar(path, newChar):
     path = path.replace('\\', newChar)
     path = path.replace('*', newChar)
     path = path.replace('\"', newChar)
+    leng = len(path)
+    if leng <= 0:
+        return path
+    
+    lpath = []
+    for item in path:
+        lpath.append(item)
+    while leng > 0:
+        if lpath[leng-1] != '.':
+            break;
+        lpath[leng-1] = newChar
+        leng = leng - 1
+    path = "".join(lpath)
     return path
 
 
