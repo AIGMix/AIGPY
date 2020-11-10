@@ -1,23 +1,19 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-import os
-import platform
-
 import aigpy.configHelper as ConfigHelper
 
 
-
 def cmpVersion(ver1, ver2):
-    vlist1 = ver1.split('.')
-    vlist2 = ver2.split('.')
+    array1 = ver1.split('.')
+    array2 = ver2.split('.')
     iIndex = 0
-    for obj in vlist1:
-        if len(vlist2) <= iIndex:
+    for obj in array1:
+        if len(array2) <= iIndex:
             break
-        if obj > vlist2[iIndex]:
+        if obj > array2[iIndex]:
             return 1
-        if obj < vlist2[iIndex]:
+        if obj < array2[iIndex]:
             return -1
         iIndex = iIndex + 1
     return 0

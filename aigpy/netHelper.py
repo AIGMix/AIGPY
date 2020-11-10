@@ -143,30 +143,34 @@ def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False)
         return False, e
 
 
-def __downloadPartFile__(url, fileName, stimeout=None, start=None, length=None, progress = None, unit = 'mb'):
-    try:
-        headers = None
-        if start != None and length != None:
-            rang = 'bytes=%s-%s' % (start, start + length - 1)
-            headers = {'Range': rang}
-        
-        res = requests.get(url, headers=headers, timeout=stimeout)
-        res.raise_for_status()
+def __downloadPartFile__(url, fileName, stimeout=None, start=None, length=None, progress = None, unit = 'mb', retry = 3):
+    while retry > 0:
+        try:
+            headers = None
+            if start is not None and length is not None:
+                rang = 'bytes=%s-%s' % (start, start + length - 1)
+                headers = {'Range': rang}
+            
+            res = requests.get(url, headers=headers, timeout=stimeout)
+            res.raise_for_status()
 
-        # mkdir
-        path = getDirName(fileName)
-        mkdirs(path)
+            # mkdir
+            path = getDirName(fileName)
+            mkdirs(path)
 
-        with open(fileName, 'wb') as f:
-            f.write(res.content)
+            with open(fileName, 'wb') as f:
+                f.write(res.content)
 
-        if progress is not None:
-            progress.addCurCount(convertStorageUnit(length, 'byte', unit))
-        return True, None
-    except Exception as e:
-        if os.path.isfile(fileName):
-            os.unlink(fileName)
-        return False, e
+            if progress is not None:
+                progress.addCurCount(convertStorageUnit(length, 'byte', unit))
+            return True, None
+        except Exception as e:
+            if os.path.isfile(fileName):
+                os.unlink(fileName)
+            if retry <= 0:
+                return False, e
+            retry -= 1
+    return False, "retry num must > 0."
 
 
 def __mergerPartFiles__(files, filepath):

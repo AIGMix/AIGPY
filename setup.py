@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 import sys
 
 if sys.version_info >= (3, 0):
-    install_requires = ["requests", "configparser", "colorama", "mutagen"]
+    install_requires = ["requests", "pycryptodome", "configparser", "colorama", "mutagen"]
 else:
-    install_requires = ["requests", "configparser", "colorama", "futures", "mutagen"]
+    install_requires = ["requests", "pycryptodome", "configparser", "colorama", "futures", "mutagen"]
 
 setup(
     name = 'aigpy',
