@@ -4,7 +4,7 @@
 @File    :   cmdHelper.py
 @Time    :   2019/02/27
 @Author  :   Yaronzz 
-@Version :   2.0
+@Version :   2.1
 @Contact :   yaronhuang@foxmail.com
 @Desc    :   
 '''
@@ -15,62 +15,55 @@ from colorama import init
 
 init(autoreset=True)
 
-
-def isInputYes(inputstr):
-    """Return: bool"""
-    if inputstr is None:
+def isInputYes(string) -> bool:
+    if string is None:
         return False
-    inputstr = str(inputstr).lower()
-    if inputstr == 'yes' or inputstr == 'y':
+    string = str(string).lower()
+    if string == 'yes' or string == 'y':
         return True
     return False
 
 
-def myinput(desc):
-    return input(desc)
-
-
-def myinputInt(desc, default):
+def inputInt(desc: str, default: int) -> int:
     try:
-        stri = myinput(desc)
-        ret = int(stri)
+        string = input(desc)
+        ret = int(string)
         return ret
     except:
         return default
 
 
-def myinputFloat(desc, default):
+def inputFloat(desc: str, default: int) -> float:
     try:
-        stri = myinput(desc)
-        ret = float(stri)
+        string = input(desc)
+        ret = float(string)
         return ret
     except:
         return default
 
 
-def myprintNoEnter(desc):
+def printNoEnter(desc: str):
     sys.stdout.write(desc)
 
 
-def findInArgv(stri):
-    if sys.argv is None or len(sys.argv) == 0:
+def findInArgv(string):
+    if sys.argv is None or len(sys.argv) <= 0:
         return None
-
     for item in sys.argv:
         if item == sys.argv[0]:
             continue
-        if item.find(stri) >= 0:
+        if item.find(string) >= 0:
             return item
     return None
 
 
 def converArgvToStr(array):
-    stri = ''
+    string = ''
     for item in array:
-        if stri != '':
-            stri = stri + ' '
-        stri = stri + '"' + item + '"'
-    return stri
+        if string != '':
+            string += ' '
+        string = string + '"' + item + '"'
+    return string
 
 
 class TextColor(Enum):
@@ -117,88 +110,3 @@ def myprint(desc, textColor=None, bgColor=None):
             color = color + str(bgColor.value)
         color = color + 'm'
         sys.stdout.write("\033[" + color + str(desc) + "\033[0m")
-
-
-def showTable(columns, rows, colheadColor=None, colsColor=[]):
-    """Display a table
-    - columns: str[y] contains of all columns name
-    - rows: str[x][y] table value
-    - colheadColor: #TextColor# columns headColor color
-    - colsColor: #TextColor# columns color, default is None  
-    """
-    try:
-        # get columns width
-        widths = []
-        for item in columns:
-            name = str(item)
-            widths.append(len(name))
-
-        for rObj in rows:
-            index = 0
-            for item in rObj:
-                if len(str(item)) > widths[index]:
-                    widths[index] = len(str(item))
-                index = index + 1
-                if len(widths) <= index:
-                    break
-
-        boardstr = '-'
-        for item in widths:
-            for i in range(item + 2 + 1):
-                boardstr = boardstr + '-'
-
-        # print all columns name
-        print(boardstr)
-        index = 0
-        for item in columns:
-            item = item.center(widths[index] + 2)
-            myprintNoEnter('|')
-            myprint(item, colheadColor)
-            index = index + 1
-            if len(widths) <= index:
-                break
-        print('|')
-        print(boardstr)
-
-        # print value
-        for rObj in rows:
-            index = 0
-            for index in range(len(columns)):
-                if len(rObj) > index:
-                    item = rObj[index]
-                else:
-                    item = ""
-                color = None
-                if len(colsColor) > index:
-                    color = colsColor[index]
-
-                item = (' ' + str(item)).ljust(widths[index] + 2)
-                myprintNoEnter('|')
-                myprint(item, color)
-                index = index + 1
-                if len(widths) <= index:
-                    break
-            print('|')
-        print(boardstr)
-        return True
-    except:
-        return False
-
-
-# v = sys.version_info
-# a = v[0]
-# b = v[1]
-# c = v[2]
-# d = v[3]
-# ff = myinputInt('input:',44)
-# t = isInputYes(ff)
-# f = myinput('tt')
-# g = 0
-# cols = []
-# cols.append('SETTINGS')
-# cols.append('VALUE')
-# rows = []
-# rows.append(['xiaoming', 22, 181.2])
-# rows.append(['hong', 'static string pack(const char*format, ...)', 171])
-# rows.append(['guoqiang', 23, 190.5])
-# showTable(cols, rows, None,[TextColor.Green])

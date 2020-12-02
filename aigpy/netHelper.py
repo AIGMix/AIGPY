@@ -10,6 +10,7 @@
 @Desc    :   
 '''
 
+
 import re
 import os
 import sys
@@ -22,7 +23,12 @@ from aigpy.progressHelper import ProgressTool
 from aigpy.convertHelper import convertStorageUnit
 from aigpy.pathHelper import getFileName, getDirName, mkdirs, getDiffTmpPathName
 from aigpy.threadHelper import ThreadTool
-from aigpy.fileHelper import getFileContent
+from aigpy.fileHelper import getFileContent, writeLines, getFileLines
+from aigpy.LockHelper import LockHelper
+import aigpy.stringHelper as AIGString
+import aigpy.fileHelper as AIGFile
+import aigpy.netHelper as AIGNet
+import aigpy.convertHelper as AIGConvert
 
 
 def getIpStatus(host, port, timeouts=1):
@@ -72,8 +78,8 @@ def downloadString(url, timeouts=(3.05, 27)):
         re = requests.get(url, timeouts)
         return re.content
     except:
-        return None 
-    
+        return None
+
 
 def downloadJson(url, timeouts=(3.05, 27)):
     try:
@@ -93,14 +99,14 @@ def downloadFileByUrls(urlArray, fileName, stimeout=None, showprogress=False):
         desc = getFileName(fileName)
         progress = ProgressTool(len(urlArray), 10, unit='', desc=desc)
 
-    curcount = 1    
+    curcount = 1
     for item in urlArray:
         ret, ex = downloadFile(item, fileName, stimeout, False, append=True)
         if ret != True or ex != None:
             return False
         if progress:
             progress.setCurCount(curcount)
-            curcount+=1
+            curcount += 1
     return True
 
 
@@ -110,16 +116,16 @@ def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False)
             response = urlopen(url)
         else:
             response = urlopen(url, timeout=stimeout)
-        
+
         unit = 'mb'
         if convertStorageUnit(response.length, 'byte', unit) < 1:
             unit = 'kb'
         progress = None
         if showprogress:
-            desc = ""#getFileName(fileName)
+            desc = ""  # getFileName(fileName)
             progress = ProgressTool(convertStorageUnit(response.length, 'byte', unit), 15, unit=unit, desc=desc)
 
-        mode ='wb'
+        mode = 'wb'
         if append:
             mode = 'ab'
 
@@ -127,7 +133,7 @@ def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False)
         path = getDirName(fileName)
         mkdirs(path)
 
-        curcount  = 0
+        curcount = 0
         chunksize = 16 * 1024
         with open(fileName, mode) as f:
             while True:
@@ -143,14 +149,14 @@ def downloadFile(url, fileName, stimeout=None, showprogress=False, append=False)
         return False, e
 
 
-def __downloadPartFile__(url, fileName, stimeout=None, start=None, length=None, progress = None, unit = 'mb', retry = 3):
+def __downloadPartFile__(url, fileName, stimeout=None, start=None, length=None, progress=None, unit='mb', retry=3):
     while retry > 0:
         try:
             headers = None
             if start is not None and length is not None:
                 rang = 'bytes=%s-%s' % (start, start + length - 1)
                 headers = {'Range': rang}
-            
+
             res = requests.get(url, headers=headers, timeout=stimeout)
             res.raise_for_status()
 
@@ -184,6 +190,15 @@ def __mergerPartFiles__(files, filepath):
         return False
 
 
+def __checkFiles__(files):
+    for item in files:
+        if os.path.isfile(files):
+            continue
+        else:
+            return False
+    return True
+
+
 def downloadFileMultiThread(url, fileName, stimeout=None, showprogress=False, threadnum=30, partsize=1048576):
     try:
         filelength = getFileSize(url)
@@ -206,7 +221,7 @@ def downloadFileMultiThread(url, fileName, stimeout=None, showprogress=False, th
         path = getDirName(fileName)
         tmpPath = getDiffTmpPathName(path)
         if mkdirs(tmpPath) is False:
-            return False, "Creat tmpdir failed:" + tmpPath;
+            return False, "Creat tmpdir failed:" + tmpPath
 
         # thread
         threads = ThreadTool(threadnum)
@@ -226,11 +241,19 @@ def downloadFileMultiThread(url, fileName, stimeout=None, showprogress=False, th
             threads.start(__downloadPartFile__, url, filepath, stimeout, item[0], item[1], progress, unit)
         threads.waitAll()
 
-        # merger
-        flag = __mergerPartFiles__(files, fileName)
+        #check and merger
+        errmsg = ""
+        flag = __checkFiles__(files)
+        if flag is False:
+            errmsg = "Merger files failed, some files download failed."
+        else:
+            flag = __mergerPartFiles__(files, fileName)
+            if flag is False:
+                errmsg = "Merger files failed."
+
         shutil.rmtree(tmpPath)
         threads.close()
-        return flag, None
+        return flag, errmsg
 
     except Exception as e:
         shutil.rmtree(tmpPath)
@@ -238,20 +261,108 @@ def downloadFileMultiThread(url, fileName, stimeout=None, showprogress=False, th
         return False, e
 
 
-# import aigpy.convertHelper as AIGConvert
-# import aigpy.netHelper as AIGNet
-# import aigpy.fileHelper as AIGFile
-# import aigpy.stringHelper as AIGString
+def __downloadPartFile2__(lock: LockHelper, url, fileName, stimeout=None, start=None, length=None, progress=None, unit='mb', retry=3):
+    isLock = False
+    while retry > 0:
+        try:
+            headers = None
+            if start is not None and length is not None:
+                rang = 'bytes=%s-%s' % (start, start + length - 1)
+                headers = {'Range': rang}
 
-# fileName = ""
-# outfileName = ""
-# content = AIGFile.getFileContent(fileName)
-# lines = content.split('\n')
-# outLines = ""
-# for item in lines:
-#     size = AIGNet.getFileSize(item)
-#     sizeString = AIGConvert.convertStorageUnitToString(size, 'byte')
-#     print(sizeString)
-#     outLines += '[' + sizeString + '] ' + item + '\n'
-# AIGFile.write(outfileName, outLines, 'w+')
+            res = requests.get(url, headers=headers, timeout=stimeout)
+            res.raise_for_status()
 
+            # mkdir
+            path = getDirName(fileName)
+            mkdirs(path)
+
+            lock.write_acquire()
+            isLock = True
+            with open(fileName, 'rb+') as f:
+                f.seek(start)
+                f.write(res.content)
+                writeLines(fileName + ".result", ["index=" + str(start) + ",length=" + str(length)], "a")
+            lock.write_release()
+            isLock = False
+
+
+            if progress is not None:
+                progress.addCurCount(convertStorageUnit(length, 'byte', unit))
+            return True, None
+        except Exception as e:
+            if isLock:
+                lock.write_release()
+                isLock = False
+            if retry <= 0:
+                return False, e
+            retry -= 1
+    return False, "retry num must > 0."
+
+
+def downloadFileMultiThread2(url, fileName, stimeout=None, showprogress=False, threadnum=30, partsize=1048576):
+    try:
+        fileResult = fileName + '.result'
+        filelength = getFileSize(url)
+        if filelength <= 0:
+            return False, "File size = " + str(filelength)
+
+        at = 0
+       	rangs = []
+        length = filelength
+        while length > 0:
+            if length > partsize:
+                bf = [at, partsize]
+            else:
+                bf = [at, length]
+            rangs.append(bf)
+            at += partsize
+            length -= partsize
+
+        # Creat dir
+        path = getDirName(fileName)
+        if mkdirs(path) is False:
+            return False, "Creat path failed:" + path
+
+        # Creat empty file
+        with open(fileName, 'wb') as fd:
+            fd.seek(filelength - 1)
+            fd.write(b'\x00')
+
+        if os.path.isfile(fileResult):
+            os.unlink(fileResult)
+
+        # thread
+        threads = ThreadTool(threadnum)
+        # Progress
+        unit = 'mb'
+        if convertStorageUnit(filelength, 'byte', unit) < 1:
+            unit = 'kb'
+        progress = None
+        if showprogress:
+            desc = ""  # getFileName(fileName)
+            progress = ProgressTool(convertStorageUnit(filelength, 'byte', unit), 15, unit=unit, desc=desc)
+
+        lock = LockHelper()
+        for i, item in enumerate(rangs):
+            threads.start(__downloadPartFile2__, lock, url, fileName, stimeout, item[0], item[1], progress, unit)
+        threads.waitAll()
+        threads.close()
+
+        lines = getFileLines(fileResult)
+        if os.path.isfile(fileResult):
+            os.unlink(fileResult)
+        if len(lines) != len(rangs) + 1:
+            return False, "Some parts download failed."
+        return True, ""
+
+    except Exception as e:
+        if os.path.isfile(fileResult):
+            os.unlink(fileResult)
+        if os.path.isfile(fileName):
+            os.unlink(fileName)
+        return False, e
+
+
+
+# downloadFileMultiThread2("https://down5.huorong.cn/sysdiag-full-5.0.54.7-20201115.exe", "./test/tt.exe", showprogress=True)

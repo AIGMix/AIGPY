@@ -1,4 +1,13 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@File    :  convertHelper.py
+@Date    :  2020/11/16
+@Author  :  Yaronzz
+@Version :  1.0
+@Contact :  yaronhuang@foxmail.com
+@Desc    :  
+'''
 
 def convertStorageUnit(num, srcUnit, desUnit):
     """Convert unit

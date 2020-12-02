@@ -64,3 +64,4 @@ def getInstalledVersion(projectName, pipver='3'):
     except Exception as e:
         pass
     return ''
+

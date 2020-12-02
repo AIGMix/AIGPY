@@ -14,7 +14,7 @@ import os
 
 def getFileSize(path):
     try:
-        if os.path.isfile(path) is False:
+        if not os.path.isfile(path):
             return 0
         return os.path.getsize(path)
     except:
@@ -35,6 +35,7 @@ def getFileContent(path, isBin=False):
     except:
         return ""
 
+
 def getFileLines(path):
     content = getFileContent(path)
     if content == "":
@@ -42,17 +43,19 @@ def getFileLines(path):
     lines = content.split('\n')
     return lines
 
+
 def write(path, content, mode):
     try:
         with open(path, mode) as fd:
             fd.write(content)
         return True
-    except Exception as e:
+    except:
         return False
+
 
 def writeLines(path, lines:list, mode):
     content = ""
-    for item in list:
+    for item in lines:
         content += item + '\n'
     return write(path, content, mode)
 

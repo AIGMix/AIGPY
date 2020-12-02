@@ -12,10 +12,11 @@
 '''
 import os
 import configparser
-from binascii import b2a_hex, a2b_hex
+from binascii import b2a_hex
+from binascii import a2b_hex
 from Crypto.Cipher import AES
 
-def Count(fileName, section=None):
+def count(fileName, section=None) -> int:
     """Get para number"""
     try:
         ret = 0
@@ -24,15 +25,16 @@ def Count(fileName, section=None):
         if section is None:
             seclist = cf.sections()
             for sec in seclist:
-                oplist = cf.options(sec)
-                ret    = ret + len(oplist)
+                options = cf.options(sec)
+                ret = ret + len(options)
         elif cf.has_section(section):
             ret = len(cf[section])
         return ret
     except:
         return 0
 
-def Sections(fileName):
+
+def sections(fileName):
     """Get groups"""
     try:
         cf = configparser.ConfigParser()
@@ -42,26 +44,37 @@ def Sections(fileName):
         return None
 
 
-def GetValue(section, key, default, fileName, aesKey=None):
+def __decrypt__(aesKey, value):
+    if aesKey is None or value is None or len(value) <= 0:
+        return value
+    func = AES_FUNC(aesKey)
+    value = func.decrypt(value)
+    return value
+
+
+def __encrypt__(aesKey, value):
+    if aesKey is None or value is None or len(value) <= 0:
+        return value
+    func = AES_FUNC(aesKey)
+    real_value = func.encrypt(value)
+    real_value = str(real_value, encoding="utf-8")
+    return real_value
+
+
+def getValue(section: str, key: str, default, fileName: str, aesKey=None):
     try:
         cf = configparser.ConfigParser()
         cf.read(fileName)
         if not cf.has_section(section):
             return default
-        
         if key in cf[section]:
             default = cf.get(section, key)
-
-        if aesKey is not None:
-            if default is not None and len(default) > 0:
-                func = AES_FUNC(aesKey)
-                default = func.decrypt(default)
-        return default
+        return __decrypt__(aesKey, default)
     except:
-        return default
+        return __decrypt__(aesKey, default)
 
 
-def SetValue(section, key, value, fileName, aesKey=None):
+def setValue(section, key, value, fileName, aesKey=None):
     try:
         if os.access(fileName, 0) is False:
             fp = open(fileName, "w")
@@ -72,13 +85,7 @@ def SetValue(section, key, value, fileName, aesKey=None):
         if cf.has_section(section) is False:
             cf[section] = {}
 
-        real_value = value
-        if aesKey is not None:
-            if value is not None and len(value) > 0:
-                func = AES_FUNC(aesKey)
-                real_value = func.encrypt(value)
-                real_value = str(real_value, encoding="utf-8")
-
+        real_value = __encrypt__(aesKey, value)
         cf[section][key] = real_value
         with open(fileName, "w") as f:
             cf.write(f)
@@ -87,7 +94,7 @@ def SetValue(section, key, value, fileName, aesKey=None):
         return False
 
 
-def ParseNoEqual(fileName):
+def parseNoEqual(fileName):
     ret = {}
     try:
         fd  = open(fileName, 'r')
@@ -110,6 +117,8 @@ def ParseNoEqual(fileName):
     except:
         return ret
 
+
+
 class AES_FUNC():
     def __init__(self, key):
         self.key = key
@@ -131,7 +140,6 @@ class AES_FUNC():
         return key
 
     def encrypt(self, text):
-
         # 这里密钥key 长度必须为16（AES-128）、24（AES-192）、或32（AES-256）Bytes 长度.目前AES-128足够用
         # 加密的字符需要转换为bytes
         # print(self.pad(text))
