@@ -10,41 +10,34 @@
 '''
 
 import os
+from aigpy.pathHelper import getDirName, mkdirs
 
 
-def getFileSize(path):
-    try:
-        if not os.path.isfile(path):
-            return 0
-        return os.path.getsize(path)
-    except:
+def getSize(path: str) -> int:
+    if not os.path.isfile(path):
         return 0
+    return os.path.getsize(path)
 
 
-def getFileContent(path, isBin=False):
-    mode = 'r'
-    if isBin:
-        mode = 'rb'
-    try:
-        size = getFileSize(path)
-        if size <= 0:
-            return ""
-        with open(path, mode) as fd:
-            content = fd.read(size)
-        return content
-    except:
+def getContent(path: str, isBin=False):
+    size = getSize(path)
+    if size <= 0:
         return ""
 
+    mode = 'r' if not isBin else "rb"
+    with open(path, mode) as fd:
+        content = fd.read(size)
+    return content
 
-def getFileLines(path):
-    content = getFileContent(path)
+
+def getLines(path: str) -> list:
+    content = getContent(path)
     if content == "":
         return []
-    lines = content.split('\n')
-    return lines
+    return content.split('\n')
 
 
-def write(path, content, mode):
+def write(path: str, content, mode: str):
     try:
         with open(path, mode) as fd:
             fd.write(content)
@@ -53,9 +46,23 @@ def write(path, content, mode):
         return False
 
 
-def writeLines(path, lines:list, mode):
-    content = ""
-    for item in lines:
-        content += item + '\n'
+def writeLines(path: str, lines: list, mode):
+    content = "\n".join(lines)
     return write(path, content, mode)
+
+
+def CreateEmptyFile(filePath: str, size: int):
+    try:
+        # Create dir
+        path = getDirName(filePath)
+        if mkdirs(path) is False:
+            return False
+
+        # Create empty file
+        with open(filePath, 'wb') as fd:
+            fd.seek(size - 1)
+            fd.write(b'\x00')
+        return True
+    except:
+        return False
 

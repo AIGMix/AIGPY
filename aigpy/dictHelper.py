@@ -9,17 +9,11 @@
 @Desc    :   
 '''
 
-
 class DictTool(dict):
-    def __init__(self, **kw):
+    def __init__(self, obj: dict):
         self.kp = {}
-        for k in kw.keys():
-            self.__setitem__(k, kw[k])
-
-    def __init__(self, kw):
-        self.kp = {}
-        for k in kw:
-            self.__setitem__(k, kw[k])
+        for k in obj.keys():
+            self.__setitem__(k, obj[k])
 
     def __contains__(self, k):
         if isinstance(k, str):

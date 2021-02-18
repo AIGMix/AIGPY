@@ -12,12 +12,10 @@
 import os
 import shutil
 
-def getDiffTmpPathName(basePath):
-    """Get tmp file name like 'Tmp1'"""
+def getTmpPath(basePath: str) -> str:
+    """Get tmp path name like 'Tmp1'"""
+    basePath = basePath.replace("\\", "/").strip().rstrip("/")
     count = 0
-    basePath = basePath.replace("\\", "/")
-    basePath = basePath.strip()
-    basePath = basePath.rstrip("/")
     path = basePath + '/Tmp' + str(count)
     while os.path.exists(path):
         count = count + 1
@@ -25,7 +23,7 @@ def getDiffTmpPathName(basePath):
     return path
 
 
-def mkdirs(path):
+def mkdirs(path: str) -> bool:
     path = path.replace("\\", "/")
     path = path.strip()
     path = path.rstrip("/")
@@ -38,10 +36,10 @@ def mkdirs(path):
     return True
 
 
-def remove(path):
+def remove(path: str) -> bool:
     """Remove file or dir"""
     try:
-        if(os.path.exists(path) is False):
+        if os.path.exists(path) is False:
             return True
         if os.path.isfile(path) is True:
             os.remove(path)
@@ -52,17 +50,18 @@ def remove(path):
         return False
 
 
-def copyFile(srcfile, dstfile):
+def copyFile(srcfile: str, dstfile: str) -> bool:
     if not os.path.isfile(srcfile):
         return False
-    else:
-        fpath, fname = os.path.split(dstfile)  
-        if not os.path.exists(fpath):
-            os.makedirs(fpath) 
-        shutil.copyfile(srcfile, dstfile) 
+    
+    path, name = os.path.split(dstfile)  
+    if not os.path.exists(path):
+        mkdirs(path)
+    shutil.copyfile(srcfile, dstfile) 
     return True
 
-def replaceLimitChar(path, newChar):
+
+def replaceLimitChar(path: str, newChar: str) -> str:
     if path is None:
         return ""
     if newChar is None:
@@ -76,70 +75,66 @@ def replaceLimitChar(path, newChar):
     path = path.replace('\\', newChar)
     path = path.replace('*', newChar)
     path = path.replace('\"', newChar)
-    leng = len(path)
-    if leng <= 0:
-        return path
-    
-    lpath = []
-    for item in path:
-        lpath.append(item)
-    while leng > 0:
-        if lpath[leng-1] != '.':
-            break;
-        lpath[leng-1] = newChar
-        leng = leng - 1
-    path = "".join(lpath)
+    path = path.rstrip('.')
+    path = path.strip(' ')
     return path
 
 
-def getDirName(filepath):
+def getDirName(filepath: str) -> str:
     """e:/test/file.txt --> e:/test/"""
     filepath = filepath.replace('\\', '/')
     index    = filepath.rfind('/')
-    if index == -1:
+    if index < 0:
         return './'
     return filepath[0:index+1]
 
-def getFileName(filepath):
+
+def getFileName(filepath: str) -> str:
     """e:/test/file.txt --> file.txt"""
     filepath = filepath.replace('\\', '/')
     index = filepath.rfind('/')
-    if index == -1:
+    if index < 0:
         return filepath
     return filepath[index+1:len(filepath)]
 
-def getFileNameWithoutExtension(filepath):
+
+def getFileNameWithoutExtension(filepath: str) -> str:
     """e:/test/file.txt --> file"""
     filepath = getFileName(filepath)
     index = filepath.rfind('.')
-    if index == -1:
+    if index < 0:
         return filepath
     return filepath[0:index]
 
-def getFileExtension(filepath):
+
+def getFileExtension(filepath: str) -> str:
     """e:/test/file.txt --> .txt"""
     filepath = getFileName(filepath)
     index = filepath.rfind('.')
-    if index == -1:
+    if index < 0:
         return
     return filepath[index:len(filepath)]
 
-def getDirSize(path):
+
+def getSize(path: str) -> int:
     try:
-        if os.path.isdir(path) is False:
-            return 0
         size = 0
+        if os.path.isdir(path) is False:
+            return size
+        
         for root, dirs, files in os.walk(path):
             size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
         return size
     except:
         return 0
 
-def getDirFiles(path):
+
+def getFiles(path: str) -> list:
     try:
-        if os.path.isdir(path) is False:
-            return []
         ret = []
+        if os.path.isdir(path) is False:
+            return ret
+        
         for root, dirs, files in os.walk(path):
             root = root.replace('\\','/')
             for item in files:

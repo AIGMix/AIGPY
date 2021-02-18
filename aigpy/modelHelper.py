@@ -8,12 +8,10 @@
 @Contact :   yaronhuang@foxmail.com
 @Desc    :   
 '''
-import json
 from aigpy.dictHelper import DictTool
 
-
 def modelToDict(model):
-    if model == None:
+    if model is None:
         return None
     pr = {}
     for name in dir(model):
@@ -25,8 +23,9 @@ def modelToDict(model):
         pr[name] = value
     return pr
 
+
 def dictToModel(indict, model):
-    if indict == None or model == None:
+    if indict is None or model is None:
         return None
     ret = model.__class__()
     maps = DictTool(indict)
@@ -55,7 +54,7 @@ def dictToModel(indict, model):
 
 
 def dictListToModelList(jList, model):
-    if jList == None or model == None:
+    if jList is None or model is None:
         return jList
     ret = []
     for item in jList:

@@ -46,8 +46,10 @@ def align(string, num, isLeft=True):
         leng += 1
         if isChinese(c, True):
             leng += 1
+
     if leng >= num:
         return string
+
     appendStr = ""
     while num - leng > 0:
         appendStr += " "
@@ -73,11 +75,11 @@ def getSubOnlyEnd(string, end):
 
 
 def getSub(string, start=None, end=None):
-    if start == None and end == None:
+    if start is None and end is None:
         return string
-    if end == None:
+    if end is None:
         return getSubOnlyStart(string, start)
-    if start == None:
+    if start is None:
         return getSubOnlyEnd(string, end)
 
     string = getSubOnlyStart(string, start)
@@ -88,4 +90,6 @@ def getSub(string, start=None, end=None):
     if ret == "":
         ret = string
     return ret
+
+
 

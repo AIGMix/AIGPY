@@ -8,20 +8,17 @@
 @Contact :   yaronhuang@foxmail.com
 @Desc    :   Thread Tool 
 '''
-import queue
-import sys
-import threading
 
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
-from concurrent.futures import wait
-from concurrent.futures import ALL_COMPLETED
+
 
 class ThreadTool(object):
-    def __init__(self, maxThreadNum):
+    def __init__(self, maxThreadNum: int):
         self.allTask = []
         self.thread  = ThreadPoolExecutor(max_workers=maxThreadNum)
         
+
     def start(self, function, *args, **kwargs):
         if(len(args) > 0 and len(kwargs) > 0):
             handle = self.thread.submit(function, *args, **kwargs)
@@ -35,44 +32,26 @@ class ThreadTool(object):
         self.allTask.append(handle)
         return handle
 
+
     def isFinish(self, handle):
         return handle.done()
+
 
     def getResult(self, handle):
         return handle.result()
 
+
     def waitAll(self):
-        
+        array = []
         for future in as_completed(self.allTask):
             data = future.result()
-        # wait(self.allTask, return_when=ALL_COMPLETED)
+            array.append(data)
+        return array
+
 
     def waitAnyone(self):
         as_completed(self.allTask)
-    
-    def close(self):
-        self.thread.shutdown(False)
 
-
-
-class ThreadPoolManger(object):
-    def __init__(self, maxThreadNum):
-        v = sys.version_info
-        self.work_queue = queue.Queue()
-        self.allTask = []
-        self.thread = ThreadPoolExecutor(max_workers=maxThreadNum)
-        for i in range(maxThreadNum):
-            handle = self.thread.submit(self.__workThread__)
-            self.allTask.append(handle)
-
-    def __workThread__(self):
-        while True:
-            func, args = self.work_queue.get()
-            func(*args)
-            self.work_queue.task_done()
-
-    def addWork(self, func, *args):
-        self.work_queue.put((func, args))
     
     def close(self):
         self.thread.shutdown(False)

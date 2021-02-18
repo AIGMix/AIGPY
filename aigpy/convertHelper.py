@@ -9,58 +9,85 @@
 @Desc    :  
 '''
 
-def convertStorageUnit(num, srcUnit, desUnit):
-    """Convert unit
-    - num: value
-    - srcUnit: gb/mb/kb/byte
-    - desUnit: gb/mb/kb/byte
+from enum import Enum
+
+
+class MemoryUnit(Enum):
+    GB = 0
+    MB = 1
+    KB = 2
+    BYTE = 3
+
+
+def convertMemoryUnit(num: float, srcUnit: MemoryUnit, desUnit: MemoryUnit) -> float:
+    """Convert memory unit, support gb/mb/kb/byte
+
+    Args:
+        num (float): value
+        srcUnit (MemoryUnit): Original unit
+        desUnit (MemoryUnit): Target unit
     """
+    if srcUnit == desUnit:
+        return num
+
     try:
-        units = ['gb','mb','kb','byte']
-        if srcUnit not in units or desUnit not in units:
-            return None
-        if srcUnit == desUnit:
-            return num
         num = float(num)
         if num == 0:
             return 0
-        srcIndex = units.index(srcUnit)
-        desIndex = units.index(desUnit)
-        tmp = desIndex - srcIndex
-        while tmp != 0:
+        srcIndex = srcUnit.value
+        desIndex = desUnit.value
+        diff = abs(srcIndex - desIndex)
+
+        while diff != 0:
             if srcIndex < desIndex:
                 num = num * 1024
             else:
                 num = num / 1024
-            if tmp > 0:
-                tmp = tmp - 1
-            else:
-                tmp = tmp + 1
-        return num
-    except:
-        return None
+            diff -= 1
 
-def convertStorageUnitToString(num, srcUnit):
-    """Convert unit to string
-    - num: value
-    - srcUnit: gb/mb/kb/byte
+        return num
+    except ValueError:
+        return 0
+
+
+def convertMemoryUnitAuto(num: float, unit: MemoryUnit, maxUnit: MemoryUnit) -> (float, MemoryUnit):
+    """Automatic conversion to appropriate units
+
+    Args:
+        num (float): value
+        MemoryUnit (MemoryUnit): Original unit
+
+    Returns:
+        [float, MemoryUnit]: target value and unit
     """
     try:
-        units = ['gb', 'mb', 'kb', 'byte']
-        if srcUnit not in units:
-            return '0 KB'
         num = float(num)
-        srcIndex = units.index(srcUnit)
-        if srcIndex == 0:
-            return str(round(num, 2)) + ' ' + units[0].upper()
-        
-        tmp = num
-        while srcIndex != 0:
-            num = num / 1024
-            if num < 1:
-                return str(round(tmp, 2)) + ' ' + units[srcIndex].upper()
-            tmp = num
-            srcIndex = srcIndex - 1
-        return str(round(tmp, 2)) + ' ' + units[srcIndex].upper()
-    except:
-        return '0 KB'
+        if num == 0:
+            return 0, unit
+
+        index = unit.value
+        while index > maxUnit.value:
+            newNum = num / 1024
+            if newNum < 1:
+                break
+            num = newNum
+            index -= 1
+
+        return num, MemoryUnit(index)
+    except ValueError:
+        return 0, MemoryUnit.BYTE
+
+
+def getMemoryUnitString(num: float, unit: MemoryUnit) -> str:
+    """Convert the unit to string, eg: num(2653)unit(MB) -> '2.59 GB'
+
+    Args:
+        num (float): value
+        unit (MemoryUnit): Original unit
+
+    Returns:
+        [string]: target string, keep two decimal places
+    """
+    value, newUnit = convertMemoryUnitAuto(num, unit, MemoryUnit.GB)
+    string = str(round(value, 2)) + ' ' + newUnit.name
+    return string

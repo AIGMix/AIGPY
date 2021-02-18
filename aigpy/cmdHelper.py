@@ -4,66 +4,89 @@
 @File    :   cmdHelper.py
 @Time    :   2019/02/27
 @Author  :   Yaronzz 
-@Version :   2.1
+@Version :   2.2
 @Contact :   yaronhuang@foxmail.com
 @Desc    :   
 '''
-
+import os
 import sys
 from enum import Enum
 from colorama import init
+from aigpy.pathHelper import mkdirs
 
 init(autoreset=True)
 
-def isInputYes(string) -> bool:
-    if string is None:
-        return False
-    string = str(string).lower()
-    if string == 'yes' or string == 'y':
-        return True
+
+def isInputYes(string: str) -> bool:
+    """Check the input string == yes|y|Yes|Y"""
+    if string is not None:
+        if str(string).lower() in ['yes', 'y']:
+            return True
     return False
 
 
 def inputInt(desc: str, default: int) -> int:
     try:
         string = input(desc)
-        ret = int(string)
-        return ret
-    except:
+        return int(string)
+    except ValueError:
         return default
 
 
 def inputFloat(desc: str, default: int) -> float:
     try:
         string = input(desc)
-        ret = float(string)
-        return ret
-    except:
+        return float(string)
+    except ValueError:
         return default
 
 
-def printNoEnter(desc: str):
-    sys.stdout.write(desc)
+def inputPath(desc: str, ignore: str = "") -> str:
+    """
+    Input path
+
+    return:
+    - path: existed or mkdirs success
+    """
+    path = input(desc)
+    if path == ignore:
+        return ignore
+    if os.path.isdir(path) or mkdirs(path):
+        return path
+    return ""
 
 
-def findInArgv(string):
-    if sys.argv is None or len(sys.argv) <= 0:
-        return None
-    for item in sys.argv:
-        if item == sys.argv[0]:
-            continue
-        if item.find(string) >= 0:
-            return item
+def inputLimit(desc: str, limit: list) -> str:
+    """
+    Input limit
+
+    return:
+    - path: input string in limit list
+    - none
+    """
+    string = input(desc)
+    if string in limit:
+        return string
     return None
 
 
-def converArgvToStr(array):
-    string = ''
-    for item in array:
-        if string != '':
-            string += ' '
-        string = string + '"' + item + '"'
-    return string
+def printW(desc: str, wrap: bool = True):
+    """Print desc width wrap or not"""
+    if not wrap:
+        sys.stdout.write(desc)
+    else:
+        print(desc)
+
+
+def isInArgv(string):
+    array = sys.argv
+    if array is None or len(array) <= 0:
+        return False
+
+    array.pop(0)
+    if string in array:
+        return True
+    return False
 
 
 class TextColor(Enum):
@@ -76,7 +99,7 @@ class TextColor(Enum):
     White = 37
 
 
-class BackGroundColor(Enum):
+class BackgroundColor(Enum):
     Black = 40
     Blue = 44
     Green = 42
@@ -85,28 +108,40 @@ class BackGroundColor(Enum):
     White = 47
 
 
+def __getColorString__(color: TextColor, bgColor: BackgroundColor, text: str):
+    if color is None and bgColor is None:
+        return text
+
+    array = []
+    if color is not None:
+        array.append(str(color.value))
+    if bgColor is not None:
+        array.append(str(bgColor.value))
+    return "\033[" + ';'.join(array) + 'm' + str(text) + "\033[0m"
+
 
 def green(text):
-    return "\033[" + str(TextColor.Green.value) + 'm' + str(text) + "\033[0m"
+    return __getColorString__(TextColor.Green, None, text)
+
+
 def blue(text):
-    return "\033[" + str(TextColor.Blue.value) + 'm' + str(text) + "\033[0m"
+    return __getColorString__(TextColor.Blue, None, text)
+
+
 def red(text):
-    return "\033[" + str(TextColor.Red.value) + 'm' + str(text) + "\033[0m"
+    return __getColorString__(TextColor.Red, None, text)
+
+
 def yellow(text):
-    return "\033[" + str(TextColor.Yellow.value) + 'm' + str(text) + "\033[0m"
+    return __getColorString__(TextColor.Yellow, None, text)
 
 
-
-def myprint(desc, textColor=None, bgColor=None):
-    if textColor is None and bgColor is None:
-        sys.stdout.write(desc)
-    else:
-        color = ''
-        if textColor is not None:
-            color = str(textColor.value)
-        if bgColor is not None:
-            if color != '':
-                color = color + ';'
-            color = color + str(bgColor.value)
-        color = color + 'm'
-        sys.stdout.write("\033[" + color + str(desc) + "\033[0m")
+def colorPrint(desc: str, textColor: TextColor = None, bgColor: BackgroundColor = None):
+    """Print color string
+    
+    - textColor (TextColor): font color
+    - bgColor (BackgroundColor): background color
+    
+    """
+    string = __getColorString__(textColor, bgColor, desc)
+    printW(string, False)

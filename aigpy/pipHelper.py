@@ -10,10 +10,6 @@
 '''
 
 import aigpy.netHelper as netHelper
-import sys
-import subprocess
-from aigpy import fileHelper, pathHelper
-import re
 
 def getInfo(projectName):
     """Get project information from pypi
@@ -23,6 +19,7 @@ def getInfo(projectName):
     ret = netHelper.downloadJson(url,None)
     return ret
     
+
 def getLastVersion(projectName):
     """Get project version from pypi
     - Return: str or None                              
@@ -34,6 +31,7 @@ def getLastVersion(projectName):
         return ret['info']['version']
     except:
         return None
+
 
 def getVersionList(projectName):
     """Get project all versions from pypi
@@ -47,21 +45,4 @@ def getVersionList(projectName):
     except:
         return None
 
-def getInstalledVersion(projectName, pipver='3'):
-    try:
-        cmd = 'pip' + pipver + ' freeze'
-        stdoutFile = 'piplibversion-stdout.txt'
-        fp = open(stdoutFile, 'w')
-        res = subprocess.call(cmd, shell=True, stdout=fp, stderr=fp)
-        fp.close()
-        txt = fileHelper.getFileContent(stdoutFile)
-
-        lines = txt.split('\n')
-        for item in lines:
-            if item.find(projectName + '==') == 0:
-                version = item[len((projectName + '==')):]
-                return version
-    except Exception as e:
-        pass
-    return ''
 

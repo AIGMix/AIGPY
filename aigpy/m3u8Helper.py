@@ -9,80 +9,31 @@
 @Desc    :   
 '''
 import re
-import shutil
 from aigpy import netHelper
-from aigpy.progressHelper import ProgressTool
-from aigpy.pathHelper import getDirName, getDiffTmpPathName, mkdirs
-from aigpy.threadHelper import ThreadTool
-from aigpy.fileHelper import getFileContent
+from aigpy.downloadHelper import DownloadTool
 
-def paresUrl(url):
+
+def parseUrl(url: str) -> list:
     '''Get ts-urls from m3u8-url'''
     content = netHelper.downloadString(url, None)
     pattern = re.compile(r"(?<=http).+?(?=\\n)")
     plist   = pattern.findall(str(content))
-    urllist = []
-    for item in plist:
-        urllist.append("http"+item)
+    urllist = ["http" + item for item in plist]
     return urllist
 
-def __threadfunc__(url, filepath, progress):
-    retrycount = 3
-    try:
-        while retrycount > 0:
-            retrycount = retrycount - 1
-            check = netHelper.downloadFile(url, filepath, 30)
-            if check:
-                break
-    except:
-        pass
-    progress.step()
 
-
-def __merger__(files, filepath):
-    try:
-        with open(filepath, "wb") as fd:
-            for item in files:
-                data = getFileContent(item, True)
-                fd.write(data)
-        return True
-    except:
-        return False
-    
-
-def download(url, descpath, threadnum = 15):
+def download(url: str, descpath: str, threadnum: int = 15) -> (bool, str):
     '''Download file by m3u8-url'''
-    try:
-        urllist = paresUrl(url)
-        if len(urllist) <= 0:
-            return False
-        
-        threads = ThreadTool(threadnum)
+    urllist = parseUrl(url)
+    if len(urllist) <= 0:
+        return False, "Parse m3u8 url failed."
+    
+    tool = DownloadTool(descpath, urllist)
+    check, msg = tool.start(True, threadnum)
+    if not check:
+        return False, msg
+    
+    return True, ""
 
-        # Creat tmpdir
-        path = getDirName(descpath)
-        tmpPath = getDiffTmpPathName(path)
-        if mkdirs(tmpPath) is False:
-            return False
-
-        # Progress
-        progress = ProgressTool(len(urllist), 20)
-
-        # Download files
-        files = []
-        for i, item in enumerate(urllist):
-            filepath = tmpPath + '/' + str(i) + '.ts'
-            files.append(filepath)
-            threads.start(__threadfunc__, item, filepath, progress)
-        threads.waitAll()
-
-        # merger
-        __merger__(files, descpath)
-        shutil.rmtree(tmpPath)
-        threads.close()
-        return True
-    except:
-        shutil.rmtree(tmpPath)
-        return False
 
 
