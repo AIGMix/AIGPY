@@ -24,6 +24,8 @@ def __extension__(filepath: str):
 
 
 def __content__(filepath: str):
+    if filepath is None:
+        return None
     if 'http' in filepath:
         re = requests.get(filepath)
         return re.content
@@ -88,11 +90,13 @@ class TagTool(object):
             if 'mp4' in self._ext or 'm4a' in self._ext:
                 return self.__saveMp4__(coverPath)
             return False
-        except:
+        except Exception as e:
             return False
 
 
     def __saveMp3__(self, coverPath):
+        if self._handle.tags is None:
+            self._handle.add_tags()
         self._handle.tags.add(TIT2(encoding=3, text=self.title))
         self._handle.tags.add(TALB(encoding=3, text=self.album))
         # self._handle.tags.add(TOPE(encoding=3, text=self.albumartist))
@@ -164,3 +168,4 @@ class TagTool(object):
         if 'mp4' in self._ext or 'm4a' in self._ext:
             pic = mp4.MP4Cover(data)
             self._handle.tags['covr'] = [pic]
+

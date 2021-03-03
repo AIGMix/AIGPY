@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'aigpy',
-    version = '2021.2.18.1',
+    version = '2021.3.1.0',
     license = "MIT Licence",
     description = "Python Common Tool",
 

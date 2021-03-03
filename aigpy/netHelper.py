@@ -103,7 +103,7 @@ def downloadJson(url: str, timeouts=(3.05, 27)):
         return None
 
 
-def downloadFileByUrls(urls: list, fileName, stimeout=(3.05, 27), showProgress=False):
+def downloadFileByUrls(urls: list, fileName, stimeout=3.05, showProgress=False):
     if os.access(fileName, 0):
         os.remove(fileName)
 
@@ -120,7 +120,7 @@ def downloadFileByUrls(urls: list, fileName, stimeout=(3.05, 27), showProgress=F
     return True
 
 
-def downloadFile(url: str, fileName: str, stimeout=(3.05, 27), showProgress: bool = False, append: bool = False):
+def downloadFile(url: str, fileName: str, stimeout=3.05, showProgress: bool = False, append: bool = False):
     try:
         response = urlopen(url, timeout=stimeout)
 
