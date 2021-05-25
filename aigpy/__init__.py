@@ -14,6 +14,9 @@ import aigpy.stringHelper as string
 import aigpy.systemHelper as system
 import aigpy.tagHelper as tag
 import aigpy.threadHelper as thread
+import aigpy.musicHelp as music
+import aigpy.timeHelp as time
+import aigpy.ffmpegHelper as ffmpeg
 
 
 

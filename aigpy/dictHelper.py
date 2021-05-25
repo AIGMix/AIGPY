@@ -9,6 +9,15 @@
 @Desc    :   
 '''
 
+def get(obj, array: list):
+    for item in array:
+        if obj is None:
+            return obj
+        if item in obj:
+            obj = obj[item]
+    return obj
+
+
 class DictTool(dict):
     def __init__(self, obj: dict):
         self.kp = {}

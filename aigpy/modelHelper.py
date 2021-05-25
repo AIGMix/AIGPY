@@ -10,9 +10,15 @@
 '''
 from aigpy.dictHelper import DictTool
 
+class ModelBase(object):
+    pass
+
 def modelToDict(model):
     if model is None:
         return None
+    if not __isModel__(model):
+        return None
+
     pr = {}
     for name in dir(model):
         value = getattr(model, name)
@@ -20,6 +26,10 @@ def modelToDict(model):
             continue
         if callable(value):
             continue
+        if __isModelList__(value):
+            value = modelListToDictList(value)
+        if __isModel__(value):
+            value = modelToDict(value)
         pr[name] = value
     return pr
 
@@ -62,6 +72,15 @@ def dictListToModelList(jList, model):
         ret.append(data)
     return ret
 
+def modelListToDictList(mList):
+    if mList is None:
+        return mList
+    ret = []
+    for item in mList:
+        data = modelToDict(item)
+        ret.append(data)
+    return ret
+
 
 def __isDict__(data):
     if isinstance(data, dict):
@@ -80,3 +99,11 @@ def __isDictList__(data):
         for item in data:
             return __isDict__(item)
     return False
+
+def __isModelList__(data):
+    if isinstance(data, list):
+        return True
+    return False
+
+def __isModel__(data):
+    return isinstance(data, ModelBase)

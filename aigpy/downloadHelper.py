@@ -11,7 +11,6 @@
 
 import requests
 
-from aigpy.netHelper import getSize, getUrlsSize
 from aigpy.fileHelper import CreateEmptyFile
 from aigpy.threadHelper import ThreadTool
 from aigpy.convertHelper import convertMemoryUnitAuto, MemoryUnit, convertMemoryUnit
@@ -26,7 +25,7 @@ class __Part__(object):
         self.fileOffset = fileOffset
 
 
-def __downloadPartFile__(part: __Part__, fileName: str, lock, progress, unit, retry=3):
+def __downloadPartFile__(part: __Part__, fileName: str, lock, progress, unit, retry=3, proxies=None):
     error = None
     while retry > 0:
         retry -= 1
@@ -34,7 +33,7 @@ def __downloadPartFile__(part: __Part__, fileName: str, lock, progress, unit, re
             rang = 'bytes=%s-%s' % (part.requestOffset, part.requestOffset + part.requestLength - 1)
             headers = {'Range': rang}
 
-            res = requests.get(part.url, headers=headers, timeout=(5, 30))
+            res = requests.get(part.url, headers=headers, timeout=(5, 30), proxies=proxies)
             res.raise_for_status()
         except Exception as e:
             error = e
@@ -59,15 +58,33 @@ def __downloadPartFile__(part: __Part__, fileName: str, lock, progress, unit, re
 
 
 class DownloadTool(object):
-    def __init__(self, filePath: str, fileUrls: list):
+    def __init__(self, filePath: str, fileUrls: list, proxies:dict=None):
         self.filePath = filePath
         self.fileUrls = fileUrls
-
+        self.proxies = proxies
         self.__partSize__ = 1048576
+
+    def __getSize__(self, url):
+        ret = requests.get(url, proxies=self.proxies)
+        if 'Content-Length' in ret.headers:
+            return int(ret.headers['Content-Length'])
+        return -1
+
+    def __getUrlsSize__(self, urls):
+        totalSize = 0
+        array = []
+        for item in urls:
+            size = self.__getSize__(item)
+            totalSize += size
+            if size < 0:
+                return -1, []
+            array.append(size)
+        return totalSize, array
+
 
 
     def __getOneUrlParts__(self, url, partSize) -> (int, list, str):
-        fileSize = getSize(url)
+        fileSize = self.__getSize__(url)
         if fileSize <= 0:
             return 0, [], "Get file size failed."
 
@@ -86,7 +103,7 @@ class DownloadTool(object):
     
 
     def __getMoreUrlsParts__(self, urls) -> (int, list, str):
-        fileSize, urlSizes = getUrlsSize(urls)
+        fileSize, urlSizes = self.__getUrlsSize__(urls)
         if fileSize <= 0:
             return 0, [], "Get some file sizes failed."
         
@@ -126,7 +143,7 @@ class DownloadTool(object):
 
             lock = RWLock()
             for item in parts:
-                threads.start(__downloadPartFile__, item, self.filePath, lock, progress, unit)
+                threads.start(__downloadPartFile__, item, self.filePath, lock, progress, unit, 3, self.proxies)
             results = threads.waitAll()
             threads.close()
 
@@ -140,3 +157,6 @@ class DownloadTool(object):
 
     def setPartSize(self, size: int):
         self.__partSize__ = size
+
+
+
