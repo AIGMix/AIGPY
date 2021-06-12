@@ -140,8 +140,8 @@ class TagTool(object):
     def __saveMp4__(self, coverPath):
         self._handle.tags['\xa9nam'] = self.title
         self._handle.tags['\xa9alb'] = self.album
-        self._handle.tags['aART'] = __tryList__(self.albumartist)
-        self._handle.tags['\xa9ART'] = __tryList__(self.artist)
+        self._handle.tags['aART'] = self.albumartist
+        self._handle.tags['\xa9ART'] = self.artist
         self._handle.tags['cprt'] = __tryStr__(self.copyright)
         self._handle.tags['trkn'] = [[__tryInt__(self.tracknumber), __tryInt__(self.totaltrack)]]
         self._handle.tags['disk'] = [[__tryInt__(self.discnumber), __tryInt__(self.totaldisc)]]
