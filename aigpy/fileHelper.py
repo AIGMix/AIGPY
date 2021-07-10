@@ -10,6 +10,8 @@
 '''
 
 import os
+import json
+import hashlib
 from aigpy.pathHelper import getDirName, mkdirs
 
 
@@ -17,6 +19,18 @@ def getSize(path: str) -> int:
     if not os.path.isfile(path):
         return 0
     return os.path.getsize(path)
+
+
+def getHash(path: str, blockSize=2 * 1024 * 1024) -> str:
+    with open(path, 'rb') as f:
+        sha1 = hashlib.sha1()
+        while True:
+            data = f.read(blockSize)
+            if not data:
+                break
+            sha1.update(data)
+        return sha1.hexdigest()
+    return ''
 
 
 def getContent(path: str, isBin=False):
@@ -28,6 +42,15 @@ def getContent(path: str, isBin=False):
     with open(path, mode) as fd:
         content = fd.read(size)
     return content
+
+
+def getJson(path):
+    try:
+        with open(path, 'rb') as f:
+            text = f.read().decode('utf-8')
+            return json.loads(text)
+    except:
+        return {}
 
 
 def getLines(path: str) -> list:
@@ -51,6 +74,16 @@ def writeLines(path: str, lines: list, mode):
     return write(path, content, mode)
 
 
+def writeJson(path: str, data: dict):
+    try:
+        with open(path, 'w') as f:
+            f.write(json.dumps(data))
+            f.flush()
+        return True
+    except:
+        return False
+
+
 def CreateEmptyFile(filePath: str, size: int):
     try:
         # Create dir
@@ -65,4 +98,3 @@ def CreateEmptyFile(filePath: str, size: int):
         return True
     except:
         return False
-

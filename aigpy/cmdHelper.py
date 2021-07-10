@@ -138,10 +138,22 @@ def yellow(text):
 
 def colorPrint(desc: str, textColor: TextColor = None, bgColor: BackgroundColor = None):
     """Print color string
-    
+
     - textColor (TextColor): font color
     - bgColor (BackgroundColor): background color
-    
+
     """
     string = __getColorString__(textColor, bgColor, desc)
     printW(string, False)
+
+
+def printInfo(desc: str):
+    print(blue("Info: ") + desc)
+
+
+def printErr(desc: str):
+    print(red("Err: ") + desc)
+
+
+def printSuccess(desc: str):
+    print(green("Success: ") + desc)
