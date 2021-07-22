@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :  LockHelper.py
 @Date    :  2020/11/16
 @Author  :  Yaronzz
 @Version :  1.0
 @Contact :  yaronhuang@foxmail.com
 @Desc    :  
-'''
+"""
 
 import threading
 
@@ -17,7 +17,7 @@ class RWLock(object):
         self.rlock = threading.Lock()
         self.wlock = threading.Lock()
         self.reader = 0
-    
+
     def write_acquire(self):
         self.wlock.acquire()
 

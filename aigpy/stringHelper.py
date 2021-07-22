@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   stringHelper.py
 @Time    :   2019/03/11
 @Author  :   Yaronzz 
 @Version :   2.0
 @Contact :   yaronhuang@foxmail.com
-@Desc    :   
-'''
+@Desc    :  
+"""
 
 
 def isNull(word):
@@ -90,6 +90,3 @@ def getSub(string, start=None, end=None):
     if ret == "":
         ret = string
     return ret
-
-
-

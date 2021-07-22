@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   progressHelper.py
 @Time    :   2018/12/28
 @Author  :   Yaronzz 
 @Version :   2.0
 @Contact :   yaronhuang@foxmail.com
 @Desc    :   Show ProgressBar
-'''
+"""
 
 import sys
 import threading
@@ -61,7 +61,7 @@ class ProgressTool(object):
             percent = self.curCount * 100.0 / self.maxCount
             # 输出字符串
             process = '%3d' % percent + '%|'
-            process += self.icon*numBlock + ' '*numEmpty + '| '
+            process += self.icon * numBlock + ' ' * numEmpty + '| '
             process += str(round(self.curCount, 2)) + '/'
             process += str(round(self.maxCount, 2)) + ' ' + self.unit + self.desc
 

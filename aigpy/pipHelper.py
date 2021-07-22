@@ -1,24 +1,25 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   pipHelper.py
 @Time    :   2019/03/11
 @Author  :   Yaronzz 
 @Version :   2.0
 @Contact :   yaronhuang@foxmail.com
 @Desc    :   pip server tool
-'''
+"""
 
 import aigpy.netHelper as netHelper
+
 
 def getInfo(projectName):
     """Get project information from pypi
     - Return: json or None                              
     """
     url = 'https://pypi.org/pypi/' + projectName + '/json'
-    ret = netHelper.downloadJson(url,None)
+    ret = netHelper.downloadJson(url, None)
     return ret
-    
+
 
 def getLastVersion(projectName):
     """Get project version from pypi
@@ -44,5 +45,3 @@ def getVersionList(projectName):
         return ret['releases']
     except:
         return None
-
-

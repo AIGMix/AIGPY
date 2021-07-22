@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :  downloadHelper.py
 @Date    :  2021/02/07
 @Author  :  Yaronzz
 @Version :  1.0
 @Contact :  yaronhuang@foxmail.com
 @Desc    :  
-'''
+"""
 
 import requests
 
-from aigpy.fileHelper import CreateEmptyFile
-from aigpy.threadHelper import ThreadTool
-from aigpy.convertHelper import convertMemoryUnitAuto, MemoryUnit, convertMemoryUnit
-from aigpy.progressHelper import ProgressTool
 from aigpy.LockHelper import RWLock
+from aigpy.convertHelper import convertMemoryUnitAuto, MemoryUnit, convertMemoryUnit
+from aigpy.fileHelper import CreateEmptyFile
+from aigpy.progressHelper import ProgressTool
+from aigpy.threadHelper import ThreadTool
+
 
 class __Part__(object):
     def __init__(self, url: str, requestOffset: int, requestLength: int, fileOffset: int):
@@ -54,11 +55,10 @@ def __downloadPartFile__(part: __Part__, fileName: str, lock, progress, unit, re
         lock.write_release()
         return True, ""
     return False, error
-    
 
 
 class DownloadTool(object):
-    def __init__(self, filePath: str, fileUrls: list, proxies:dict=None):
+    def __init__(self, filePath: str, fileUrls: list, proxies: dict = None):
         self.filePath = filePath
         self.fileUrls = fileUrls
         self.proxies = proxies
@@ -81,8 +81,6 @@ class DownloadTool(object):
             array.append(size)
         return totalSize, array
 
-
-
     def __getOneUrlParts__(self, url, partSize) -> (int, list, str):
         fileSize = self.__getSize__(url)
         if fileSize <= 0:
@@ -100,20 +98,18 @@ class DownloadTool(object):
             offset += partSize
             length -= partSize
         return fileSize, parts, ""
-    
 
     def __getMoreUrlsParts__(self, urls) -> (int, list, str):
         fileSize, urlSizes = self.__getUrlsSize__(urls)
         if fileSize <= 0:
             return 0, [], "Get some file sizes failed."
-        
+
         parts = []
         offset = 0
         for i, url in enumerate(urls):
             parts.append(__Part__(url, 0, urlSizes[i], offset))
             offset += urlSizes[i]
         return fileSize, parts, ""
-
 
     def start(self, showProgress: bool = False, threadNum: int = 10) -> (bool, str):
         size = len(self.fileUrls)
@@ -126,7 +122,7 @@ class DownloadTool(object):
 
         if msg != "":
             return False, msg
-        
+
         try:
             check = CreateEmptyFile(self.filePath, fileSize)
             if not check:
@@ -154,9 +150,5 @@ class DownloadTool(object):
         except Exception as e:
             return False, str(e)
 
-
     def setPartSize(self, size: int):
         self.__partSize__ = size
-
-
-

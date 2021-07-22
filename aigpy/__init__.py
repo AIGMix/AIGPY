@@ -1,11 +1,13 @@
+import aigpy.LockHelper as lock
 import aigpy.cmdHelper as cmd
 import aigpy.convertHelper as convert
 import aigpy.dictHelper as adict
 import aigpy.downloadHelper as download
+import aigpy.ffmpegHelper as ffmpeg
 import aigpy.fileHelper as file
-import aigpy.LockHelper as lock
 import aigpy.m3u8Helper as m3u8
 import aigpy.modelHelper as model
+import aigpy.musicHelp as music
 import aigpy.netHelper as net
 import aigpy.pathHelper as path
 import aigpy.pipHelper as pip
@@ -14,9 +16,4 @@ import aigpy.stringHelper as string
 import aigpy.systemHelper as system
 import aigpy.tagHelper as tag
 import aigpy.threadHelper as thread
-import aigpy.musicHelp as music
 import aigpy.timeHelp as time
-import aigpy.ffmpegHelper as ffmpeg
-
-
-

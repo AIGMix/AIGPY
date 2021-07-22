@@ -1,26 +1,27 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-'''
+"""
 @File    :   netHelper.py
 @Time    :   2018/12/17
 @Author  :   Yaronzz 
 @Version :   2.0
 @Contact :   yaronhuang@foxmail.com
-@Desc    :   
-'''
+@Desc    :  
+"""
 
+import json
+import os
+import re
+import socket
 from urllib.request import urlopen
 
-import re
-import os
-import json
-import socket
 import requests
 
 from aigpy.convertHelper import convertMemoryUnitAuto, convertMemoryUnit, MemoryUnit
-from aigpy.progressHelper import ProgressTool
 from aigpy.pathHelper import getDirName, mkdirs
+from aigpy.progressHelper import ProgressTool
+
 
 def getIpStatus(host: str, port: int, timeouts: int = 1) -> bool:
     """Check the ip status"""
@@ -47,10 +48,7 @@ def ignoreCertificate():
 
 
 def getResult(code=0, msg='', data=''):
-    ret = {}
-    ret['code'] = code
-    ret['errmsg'] = msg
-    ret['data'] = data
+    ret = {'code': code, 'errmsg': msg, 'data': data}
     return json.dumps(ret)
 
 

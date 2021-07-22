@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   dictHelper.py
 @Time    :   2020/08/14
 @Author  :   Yaronzz
 @Version :   2.0
 @Contact :   yaronhuang@foxmail.com
-@Desc    :   
-'''
+@Desc    :  
+"""
+
 
 def get(obj, array: list):
     for item in array:

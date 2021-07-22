@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-#coding:utf-8
-'''
+# coding:utf-8
+"""
 @File    :   ffmpegHelper.py
 @Time    :   2018/12/17
 @Author  :   Yaron Huang 
 @Version :   1.0
 @Contact :   yaronhuang@qq.com
-@Desc    :   
-'''
-import sys
-import subprocess
+@Desc    :  
+"""
 import asyncio
+import subprocess
+import sys
 
 
 def convert(srcPath, descPath, bitrate: int = 1600):
@@ -20,7 +20,7 @@ def convert(srcPath, descPath, bitrate: int = 1600):
         f"-b:a {bitrate} "
         '-af "apad=pad_dur=2, dynaudnorm, loudnorm=I=-17" "%s"'
     )
-    
+
     if sys.platform == "win32":
         formattedCommand = command % (
             str(srcPath),
@@ -31,7 +31,7 @@ def convert(srcPath, descPath, bitrate: int = 1600):
             str(srcPath).replace("$", r"\$"),
             str(descPath).replace("$", r"\$"),
         )
-    
+
     process = subprocess.Popen(
         formattedCommand,
         stdout=asyncio.subprocess.PIPE,
@@ -57,10 +57,8 @@ def isEnable():
         )
     except FileNotFoundError:
         return False
-    
+
     return True
-
-
 
 # t = isEnable()
 # convert('e://test.webm', 'e://test.mp3', 159489)

@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   tagHelper.py
 @Time    :   2019/07/18
 @Author  :   Yaronzz 
 @Version :   2.0
 @Contact :   yaronhuang@foxmail.com
-@Desc    :   
-'''
+@Desc    :  
+"""
 import os
-import requests
 
+import requests
 from mutagen import File
 from mutagen import flac
 from mutagen import mp4
-from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TCON, TCOM, TSRC, SLT, USLT
-from mutagen.easyid3 import EasyID3, ID3
+from mutagen.id3 import TALB, TCOP, TDRC, TIT2, TPE1, TRCK, APIC, TCON, TCOM, TSRC, USLT
 
 
 def __extension__(filepath: str):
@@ -56,8 +55,6 @@ def __tryList__(obj):
     return ", ".join(obj)
 
 
-
-
 class TagTool(object):
     def __init__(self, filePath):
         if os.path.isfile(filePath) is False:
@@ -81,9 +78,8 @@ class TagTool(object):
         self.composer = ''
         self.isrc = ''
         self.lyrics = ''
-        
-        self.__load__()
 
+        self.__load__()
 
     def save(self, coverPath: str = None):
         try:
@@ -96,15 +92,15 @@ class TagTool(object):
             return False
         except Exception as e:
             return False, str(e)
-        
-    def addPic(self, converPath:str = None):
+
+    def addPic(self, converPath: str = None):
         try:
             self.__savePic__(converPath)
             self._handle.save()
             return True
         except Exception as e:
             return False, str(e)
-        
+
     def addLyrics(self, lyrics: str = None):
         try:
             if 'mp3' in self._ext:
@@ -117,7 +113,7 @@ class TagTool(object):
             return True
         except Exception as e:
             return False, str(e)
-        
+
     def __load__(self):
         try:
             if 'mp3' in self._ext:
@@ -128,7 +124,6 @@ class TagTool(object):
                 return self.__getMp4__()
         except:
             return
-
 
     def __saveMp3__(self, coverPath):
         if self._handle.tags is None:
@@ -148,11 +143,10 @@ class TagTool(object):
         self.__savePic__(coverPath)
         self._handle.save()
         return True
-    
+
     def __getMp3__(self):
         if self._handle.tags is None:
             self._handle.add_tags()
-
 
     def __saveFlac__(self, coverPath):
         if self._handle.tags is None:
@@ -174,7 +168,7 @@ class TagTool(object):
         self.__savePic__(coverPath)
         self._handle.save()
         return True
-    
+
     def __getFlac__(self):
         if self._handle.tags is None:
             return
@@ -208,7 +202,7 @@ class TagTool(object):
         self.__savePic__(coverPath)
         self._handle.save()
         return True
-    
+
     def __getMp4__(self):
         self.title = self.__getTagItem__('\xa9nam')
         self.album = self.__getTagItem__('\xa9alb')
@@ -228,7 +222,7 @@ class TagTool(object):
         if name in self._handle.tags:
             return self._handle.tags[name]
         return ''
-    
+
     def __savePic__(self, coverPath):
         data = __content__(coverPath)
         if data is None:
@@ -244,10 +238,7 @@ class TagTool(object):
 
         if 'mp3' in self._ext:
             self._handle.tags.add(APIC(encoding=3, data=data))
-            
+
         if 'mp4' in self._ext or 'm4a' in self._ext:
             pic = mp4.MP4Cover(data)
             self._handle.tags['covr'] = [pic]
-
-
-

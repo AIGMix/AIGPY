@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-'''
+"""
 @File    :   systemHelper.py
 @Time    :   2018/12/20
 @Author  :   Yaronzz 
 @Version :   2.0
 @Contact :   yaronhuang@foxmail.com
-@Desc    :   
-'''
+@Desc    :  
+"""
 import platform
 
 

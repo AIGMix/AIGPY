@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   cmdHelper.py
 @Time    :   2019/02/27
 @Author  :   Yaronzz 
 @Version :   2.2
 @Contact :   yaronhuang@foxmail.com
 @Desc    :   
-'''
+"""
 import os
 import sys
 from enum import Enum
+
 from colorama import init
+
 from aigpy.pathHelper import mkdirs
 
 init(autoreset=True)

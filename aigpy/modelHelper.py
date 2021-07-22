@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   jsonHelper.py
 @Time    :   2020/08/10
 @Author  :   Yaronzz
 @Version :   2.0
 @Contact :   yaronhuang@foxmail.com
-@Desc    :   
-'''
+@Desc    :  
+"""
 from aigpy.dictHelper import DictTool
+
 
 class ModelBase(object):
     pass
+
 
 def modelToDict(model):
     if model is None:
@@ -72,6 +74,7 @@ def dictListToModelList(jList, model):
         ret.append(data)
     return ret
 
+
 def modelListToDictList(mList):
     if mList is None:
         return mList
@@ -100,10 +103,12 @@ def __isDictList__(data):
             return __isDict__(item)
     return False
 
+
 def __isModelList__(data):
     if isinstance(data, list):
         return True
     return False
+
 
 def __isModel__(data):
     return isinstance(data, ModelBase)
