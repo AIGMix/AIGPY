@@ -76,6 +76,8 @@ def replaceLimitChar(path: str, newChar: str) -> str:
     path = path.replace('\\', newChar)
     path = path.replace('*', newChar)
     path = path.replace('\"', newChar)
+    path = path.replace('\n', '')
+    path = path.replace('\t', '')
     path = path.rstrip('.')
     path = path.strip(' ')
     return path

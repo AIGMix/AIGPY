@@ -27,9 +27,18 @@ def isInputYes(string: str) -> bool:
     return False
 
 
+def printW(desc: str, wrap: bool = True):
+    """Print desc width wrap or not"""
+    if not wrap:
+        sys.stdout.write(desc)
+    else:
+        print(desc)
+
+
 def inputInt(desc: str, default: int) -> int:
     try:
-        string = input(desc)
+        printW(desc, False)
+        string = input()
         return int(string)
     except ValueError:
         return default
@@ -37,7 +46,8 @@ def inputInt(desc: str, default: int) -> int:
 
 def inputFloat(desc: str, default: int) -> float:
     try:
-        string = input(desc)
+        printW(desc, False)
+        string = input()
         return float(string)
     except ValueError:
         return default
@@ -50,7 +60,8 @@ def inputPath(desc: str, ignore: str = "") -> str:
     return:
     - path: existed or mkdirs success
     """
-    path = input(desc)
+    printW(desc, False)
+    path = input()
     if path == ignore:
         return ignore
     if os.path.isdir(path) or mkdirs(path):
@@ -66,18 +77,11 @@ def inputLimit(desc: str, limit: list) -> str:
     - path: input string in limit list
     - none
     """
-    string = input(desc)
+    printW(desc, False)
+    string = input()
     if string in limit:
         return string
     return None
-
-
-def printW(desc: str, wrap: bool = True):
-    """Print desc width wrap or not"""
-    if not wrap:
-        sys.stdout.write(desc)
-    else:
-        print(desc)
 
 
 def isInArgv(string):

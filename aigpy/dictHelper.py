@@ -21,6 +21,7 @@ def get(obj, array: list):
 
 class DictTool(dict):
     def __init__(self, obj: dict):
+        super().__init__()
         self.kp = {}
         for k in obj.keys():
             self.__setitem__(k, obj[k])

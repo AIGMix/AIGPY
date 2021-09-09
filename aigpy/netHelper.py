@@ -18,7 +18,7 @@ from urllib.request import urlopen
 
 import requests
 
-from aigpy.convertHelper import convertMemoryUnitAuto, convertMemoryUnit, MemoryUnit
+from aigpy.memoryHelper import unitFix, Unit, convert
 from aigpy.pathHelper import getDirName, mkdirs
 from aigpy.progressHelper import ProgressTool
 
@@ -123,7 +123,7 @@ def downloadFile(url: str, fileName: str, stimeout=3.05, showProgress: bool = Fa
         response = urlopen(url, timeout=stimeout)
 
         totalSize = response.length
-        fileSize, unit = convertMemoryUnitAuto(totalSize, MemoryUnit.BYTE, MemoryUnit.MB)
+        fileSize, unit = unitFix(totalSize, Unit.BYTE, Unit.MB)
         if showProgress:
             progress = ProgressTool(fileSize, 15, unit=unit.name)
 
@@ -139,7 +139,7 @@ def downloadFile(url: str, fileName: str, stimeout=3.05, showProgress: bool = Fa
                 chunk = response.read(chunksize)
                 curcount += len(chunk)
                 if showProgress:
-                    progress.setCurCount(convertMemoryUnit(curcount, MemoryUnit.BYTE, unit))
+                    progress.setCurCount(convert(curcount, Unit.BYTE, unit))
                 f.write(chunk)
                 if curcount >= totalSize:
                     break

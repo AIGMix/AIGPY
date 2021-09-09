@@ -12,8 +12,8 @@
 import requests
 
 from aigpy.LockHelper import RWLock
-from aigpy.convertHelper import convertMemoryUnitAuto, MemoryUnit, convertMemoryUnit
-from aigpy.fileHelper import CreateEmptyFile
+from aigpy.fileHelper import createEmptyFile
+from aigpy.memoryHelper import convert, Unit, unitFix
 from aigpy.progressHelper import ProgressTool
 from aigpy.threadHelper import ThreadTool
 
@@ -46,7 +46,7 @@ def __downloadPartFile__(part: __Part__, fileName: str, lock, progress, unit, re
                 f.seek(part.fileOffset)
                 f.write(res.content)
             if progress is not None:
-                progress.addCurCount(convertMemoryUnit(part.requestLength, MemoryUnit.BYTE, unit))
+                progress.addCurCount(convert(part.requestLength, Unit.BYTE, unit))
         except Exception as e:
             error = e
             lock.write_release()
@@ -124,13 +124,13 @@ class DownloadTool(object):
             return False, msg
 
         try:
-            check = CreateEmptyFile(self.filePath, fileSize)
+            check = createEmptyFile(self.filePath, fileSize)
             if not check:
                 return False, "Create file failed."
 
             # thread
             threads = ThreadTool(threadNum)
-            fileSize, unit = convertMemoryUnitAuto(fileSize, MemoryUnit.BYTE, MemoryUnit.MB)
+            fileSize, unit = unitFix(fileSize, Unit.BYTE, Unit.MB)
 
             # Progress
             progress = None

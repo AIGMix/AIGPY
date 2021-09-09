@@ -12,7 +12,6 @@
 import hashlib
 import json
 import os
-from typing import Optional
 
 from aigpy.pathHelper import getDirName, mkdirs
 
@@ -32,6 +31,18 @@ def getHash(path: str, blockSize: int = 2 * 1024 * 1024) -> str:
                 break
             sha1.update(data)
         return sha1.hexdigest()
+
+
+def getMD5(path: str):
+    m = hashlib.md5()
+    with open(path, 'rb') as fp:
+        while True:
+            data = fp.read(4096)
+            if not data:
+                break
+            m.update(data)
+
+    return m.hexdigest()
 
 
 def getContent(path: str, isBin: bool = False, encoding: str = None):
@@ -77,7 +88,7 @@ def writeLines(path: str, lines: list, mode: str, encoding: str = None):
 
 def writeJson(path: str, data: dict, encoding: str = None):
     try:
-        with open(path, 'w', encoding) as f:
+        with open(path, 'w', encoding=encoding) as f:
             f.write(json.dumps(data))
             f.flush()
         return True
@@ -85,7 +96,7 @@ def writeJson(path: str, data: dict, encoding: str = None):
         return False
 
 
-def CreateEmptyFile(filePath: str, size: int):
+def createEmptyFile(filePath: str, size: int):
     try:
         # Create dir
         path = getDirName(filePath)
@@ -93,9 +104,9 @@ def CreateEmptyFile(filePath: str, size: int):
             return False
 
         # Create empty file
-        with open(filePath, 'wb') as fd:
-            fd.seek(size - 1)
-            fd.write(b'\x00')
+        fp = open(filePath, "wb")
+        fp.truncate(size)
+        fp.close()
         return True
     except:
         return False

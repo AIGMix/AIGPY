@@ -19,18 +19,18 @@ def parseUrl(url: str) -> list:
     content = netHelper.downloadString(url, None)
     pattern = re.compile(r"(?<=http).+?(?=\\n)")
     plist = pattern.findall(str(content))
-    urllist = ["http" + item for item in plist]
-    return urllist
+    urlList = ["http" + item for item in plist]
+    return urlList
 
 
-def download(url: str, descpath: str, threadnum: int = 15) -> (bool, str):
+def download(url: str, descPath: str, threadNum: int = 15) -> (bool, str):
     """Download file by m3u8-url"""
-    urllist = parseUrl(url)
-    if len(urllist) <= 0:
+    urlList = parseUrl(url)
+    if len(urlList) <= 0:
         return False, "Parse m3u8 url failed."
 
-    tool = DownloadTool(descpath, urllist)
-    check, msg = tool.start(True, threadnum)
+    tool = DownloadTool(descPath, urlList)
+    check, msg = tool.start(True, threadNum)
     if not check:
         return False, msg
 

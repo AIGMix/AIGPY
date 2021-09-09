@@ -32,7 +32,7 @@ def isChinese(word, checkPunctuation=False):
     return False
 
 
-def converPunctuationToEnglish(word):
+def convertPunctuationToEnglish(word):
     table = {ord(f): ord(t) for f, t in zip(
         u'，。！？【】（）％＃＠＆１２３４５６７８９０：',
         u',.!?[]()%#@&1234567890:')}
