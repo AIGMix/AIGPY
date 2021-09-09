@@ -64,13 +64,13 @@ def unitFix(num: float, srcUnit: Unit = Unit.BYTE, maxUnit: Unit = Unit.GB) -> (
         if num == 0:
             return 0, srcUnit
 
-        index = srcUnit
+        index = srcUnit.value
         while index < maxUnit.value:
             newNum = num / 1024
             if newNum < 1:
                 break
             num = newNum
-            index -= 1
+            index += 1
 
         return num, Unit(index)
     except ValueError:
