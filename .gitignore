@@ -110,3 +110,12 @@ test.ini
 .vscode/launch.json
 .vscode/settings.json
 tmp/pdfHelper.py
+/.idea/.gitignore
+/.idea/AIGPY.iml
+/.idea/dbnavigator.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/test2.py
