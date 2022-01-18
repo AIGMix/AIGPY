@@ -17,3 +17,4 @@ import aigpy.systemHelper as system
 import aigpy.tagHelper as tag
 import aigpy.threadHelper as thread
 import aigpy.timeHelp as time
+import aigpy.memoryHelper as memory

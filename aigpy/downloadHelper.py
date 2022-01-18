@@ -8,7 +8,10 @@
 @Contact :  yaronhuang@foxmail.com
 @Desc    :  
 """
-
+import abc
+from importlib.metadata import files
+import threading
+from tkinter.messagebox import NO
 import requests
 
 from aigpy.LockHelper import RWLock
@@ -26,7 +29,33 @@ class __Part__(object):
         self.fileOffset = fileOffset
 
 
-def __downloadPartFile__(part: __Part__, fileName: str, lock, progress, unit, retry=3, proxies=None):
+class UserProgress(metaclass=abc.ABCMeta):
+    def __init__(self):
+        self.maxNum = 100
+        self.curNum = 0
+        
+    def setMaxNum(self, maxNum: int):
+        self.maxNum = maxNum
+        self.updateMaxNum()
+
+    def addCurNum(self, num: int):
+        self.curNum += num
+        self.updateCurNum()
+    
+    def setCurNum(self, num: int):
+        self.curNum = num
+        self.updateCurNum()
+        
+    @abc.abstractmethod
+    def updateCurNum(self):
+        pass
+    
+    @abc.abstractmethod
+    def updateMaxNum(self):
+        pass
+
+
+def __downloadPartFile__(part: __Part__, parent, progress, unit, retry=3):
     error = None
     while retry > 0:
         retry -= 1
@@ -34,25 +63,30 @@ def __downloadPartFile__(part: __Part__, fileName: str, lock, progress, unit, re
             rang = 'bytes=%s-%s' % (part.requestOffset, part.requestOffset + part.requestLength - 1)
             headers = {'Range': rang}
 
-            res = requests.get(part.url, headers=headers, timeout=(5, 30), proxies=proxies)
+            res = requests.get(part.url, headers=headers, timeout=(5, 30), proxies=parent.proxies)
             res.raise_for_status()
         except Exception as e:
             error = e
             continue
 
-        lock.write_acquire()
+        content = res.content
+
+        parent.lock.write_acquire()
         try:
-            with open(fileName, 'rb+') as f:
+            with open(parent.filePath, 'rb+') as f:
                 f.seek(part.fileOffset)
-                f.write(res.content)
+                f.write(content)
             if progress is not None:
                 progress.addCurCount(convert(part.requestLength, Unit.BYTE, unit))
+            if parent.userProgress is not None:
+                parent.userProgress.addCurNum(part.requestLength)
+            parent.curSize += part.requestLength
         except Exception as e:
             error = e
-            lock.write_release()
+            parent.lock.write_release()
             continue
-
-        lock.write_release()
+        parent.lock.write_release()
+        
         return True, ""
     return False, error
 
@@ -62,8 +96,14 @@ class DownloadTool(object):
         self.filePath = filePath
         self.fileUrls = fileUrls
         self.proxies = proxies
-        self.__partSize__ = 1048576
-
+        self.partSize = 1048576
+        
+        self.maxSize = 0
+        self.curSize = 0
+        
+        self.userProgress = None
+        self.lock = RWLock()
+    
     def __getSize__(self, url):
         ret = requests.get(url, proxies=self.proxies)
         if 'Content-Length' in ret.headers:
@@ -81,7 +121,7 @@ class DownloadTool(object):
             array.append(size)
         return totalSize, array
 
-    def __getOneUrlParts__(self, url, partSize) -> (int, list, str):
+    def __getOneUrlParts__(self, url):
         fileSize = self.__getSize__(url)
         if fileSize <= 0:
             return 0, [], "Get file size failed."
@@ -90,16 +130,16 @@ class DownloadTool(object):
         parts = []
         length = fileSize
         while length > 0:
-            if length > partSize:
-                bf = __Part__(url, offset, partSize, offset)
+            if length > self.partSize:
+                bf = __Part__(url, offset, self.partSize, offset)
             else:
                 bf = __Part__(url, offset, length, offset)
             parts.append(bf)
-            offset += partSize
-            length -= partSize
+            offset += self.partSize
+            length -= self.partSize
         return fileSize, parts, ""
 
-    def __getMoreUrlsParts__(self, urls) -> (int, list, str):
+    def __getMoreUrlsParts__(self, urls):
         fileSize, urlSizes = self.__getUrlsSize__(urls)
         if fileSize <= 0:
             return 0, [], "Get some file sizes failed."
@@ -111,10 +151,16 @@ class DownloadTool(object):
             offset += urlSizes[i]
         return fileSize, parts, ""
 
+    def setUserProgress(self, progress):
+        self.userProgress = progress
+        
+    def setPartSize(self, size: int):
+        self.partSize = size
+    
     def start(self, showProgress: bool = False, threadNum: int = 10) -> (bool, str):
         size = len(self.fileUrls)
         if size == 1:
-            fileSize, parts, msg = self.__getOneUrlParts__(self.fileUrls[0], self.__partSize__)
+            fileSize, parts, msg = self.__getOneUrlParts__(self.fileUrls[0])
         elif size > 1:
             fileSize, parts, msg = self.__getMoreUrlsParts__(self.fileUrls)
         else:
@@ -122,12 +168,17 @@ class DownloadTool(object):
 
         if msg != "":
             return False, msg
+        
+        self.maxSize = fileSize
 
         try:
             check = createEmptyFile(self.filePath, fileSize)
             if not check:
                 return False, "Create file failed."
 
+            if self.userProgress is not None:
+                self.userProgress.setMaxNum(fileSize)
+                
             # thread
             threads = ThreadTool(threadNum)
             fileSize, unit = unitFix(fileSize, Unit.BYTE, Unit.MB)
@@ -137,9 +188,8 @@ class DownloadTool(object):
             if showProgress:
                 progress = ProgressTool(fileSize, 15, unit=unit.name)
 
-            lock = RWLock()
             for item in parts:
-                threads.start(__downloadPartFile__, item, self.filePath, lock, progress, unit, 3, self.proxies)
+                threads.start(__downloadPartFile__, item, self,progress, unit, 3)
             results = threads.waitAll()
             threads.close()
 
@@ -150,5 +200,4 @@ class DownloadTool(object):
         except Exception as e:
             return False, str(e)
 
-    def setPartSize(self, size: int):
-        self.__partSize__ = size
+
