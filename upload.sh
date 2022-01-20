@@ -6,7 +6,7 @@ python setup.py sdist bdist_wheel
 
 pip uninstall -y aigpy
 
-python setup.py install
+# python setup.py install
 
 
 twine upload dist/*
