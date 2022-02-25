@@ -102,7 +102,7 @@ class DownloadTool(object):
         self.lock = RWLock()
     
     def __getSize__(self, url):
-        ret = requests.get(url, proxies=self.proxies)
+        ret = requests.head(url, proxies=self.proxies)
         if 'Content-Length' in ret.headers:
             return int(ret.headers['Content-Length'])
         return -1
