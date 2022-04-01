@@ -26,8 +26,7 @@ jobs:
     - name: Build
       shell: bash
       run: |
-        pyinstaller -F test.py
-        cp -rf aigpy dist/
+        pyinstaller -D test.py
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
