@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ${{ aigpy.os }}
+    runs-on: [macos-latest, ubuntu-latest, windows-latest]
 
     # Platforms to build on/for
     strategy:
