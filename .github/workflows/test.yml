@@ -1,0 +1,34 @@
+name: test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ aigpy.os }}
+
+    # Platforms to build on/for
+    strategy:
+      aigpy:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip3 install pyinstaller
+
+    - name: Build
+      run: |
+        pyinstaller -F test.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with: 
+        name: test_${{ aigpy.os }}
+        path: |
+          dist/*
