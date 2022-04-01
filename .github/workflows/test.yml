@@ -26,9 +26,9 @@ jobs:
       run: |
         pyinstaller -F test.py
 
-    # - name: Upload artifact
-    #   uses: actions/upload-artifact@v2
-    #   with: 
-    #     name: test_${{ aigpy.os }}
-    #     path: |
-    #       dist/*
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with: 
+        name: test_${{ matrix.os }}
+        path: |
+          dist/*
