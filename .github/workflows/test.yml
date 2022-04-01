@@ -29,6 +29,6 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with: 
-        name: test_${{ matrix.os }}
+        name: test_${{ runner.os }}
         path: |
           dist/*
