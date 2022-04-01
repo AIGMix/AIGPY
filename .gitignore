@@ -103,7 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 .vscode/sftp.json
-test.py
 /exe
 /test
 test.ini
