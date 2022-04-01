@@ -9,7 +9,8 @@ jobs:
     # Platforms to build on/for
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest]
+        # os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
     - name: Checkout repo
@@ -23,8 +24,10 @@ jobs:
         pip3 install pyinstaller
 
     - name: Build
+      shell: bash
       run: |
         pyinstaller -F test.py
+        cp -rf aigpy dist/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
