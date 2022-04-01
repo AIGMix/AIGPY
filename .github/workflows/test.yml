@@ -6,11 +6,6 @@ jobs:
   build:
     runs-on: [macos-latest, ubuntu-latest, windows-latest]
 
-    # Platforms to build on/for
-    strategy:
-      aigpy:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
@@ -26,9 +21,9 @@ jobs:
       run: |
         pyinstaller -F test.py
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with: 
-        name: test_${{ aigpy.os }}
-        path: |
-          dist/*
+    # - name: Upload artifact
+    #   uses: actions/upload-artifact@v2
+    #   with: 
+    #     name: test_${{ aigpy.os }}
+    #     path: |
+    #       dist/*
