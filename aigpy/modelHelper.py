@@ -21,8 +21,10 @@ def modelToDict(model):
     if not __isModel__(model):
         return None
 
+    members = [attr for attr in dir(model) if not callable(getattr(model, attr)) and not attr.startswith("_")]
+
     pr = {}
-    for name in dir(model):
+    for name in members:
         value = getattr(model, name)
         if name[0] == '_':
             continue
@@ -39,13 +41,12 @@ def modelToDict(model):
 def dictToModel(indict, model):
     if indict is None or model is None:
         return None
-    ret = model.__class__()
+    ret = model
     maps = DictTool(indict)
 
-    for key in dir(ret):
+    members = [attr for attr in dir(ret) if not callable(getattr(model, attr)) and not attr.startswith("_")]
 
-        if key[0] == '_':
-            continue
+    for key in members:
         if key.lower() not in maps:
             if __isObject__(getattr(ret, key)):
                 setattr(ret, key, None)
