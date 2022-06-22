@@ -8,6 +8,8 @@
 @Contact :   yaronhuang@foxmail.com
 @Desc    :  
 """
+import json
+import aigpy
 from aigpy.dictHelper import DictTool
 
 
@@ -71,7 +73,8 @@ def dictListToModelList(jList, model):
         return jList
     ret = []
     for item in jList:
-        data = dictToModel(item, model)
+        tmpMode = model.__class__()
+        data = dictToModel(item, tmpMode)
         ret.append(data)
     return ret
 
