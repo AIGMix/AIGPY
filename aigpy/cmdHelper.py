@@ -18,6 +18,13 @@ from aigpy.pathHelper import mkdirs
 
 init(autoreset=True)
 
+__ENABLE_COLOR__ = True
+
+
+def enableColor(enable):
+    global __ENABLE_COLOR__
+    __ENABLE_COLOR__ = enable
+
 
 def isInputYes(string: str) -> bool:
     """Check the input string == yes|y|Yes|Y"""
@@ -115,6 +122,10 @@ class BackgroundColor(Enum):
 
 
 def __getColorString__(color: TextColor, bgColor: BackgroundColor, text: str):
+    global __ENABLE_COLOR__
+    if not __ENABLE_COLOR__:
+        return text
+
     if color is None and bgColor is None:
         return text
 

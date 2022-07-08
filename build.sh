@@ -1,6 +1,7 @@
 rm -rf dist
 rm -rf build 
-rm -rf aigpy.egg-info
+rm -rf *.egg-info
+rm -rf __pycache__
 
 python setup.py sdist bdist_wheel
 
@@ -12,13 +13,3 @@ pip uninstall -y aigpy
 twine upload dist/*
 
 
-
-
-
-cmd
-rd /s /q build
-rd /s /q dist
-rd /s /q aigpy.egg-info
-
-python setup.py sdist bdist_wheel
-twine upload dist/*
