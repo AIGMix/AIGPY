@@ -153,8 +153,8 @@ class TagTool(object):
             self._handle.add_tags()
         self._handle.tags['title'] = self.title
         self._handle.tags['album'] = self.album
-        self._handle.tags['albumartist'] = __tryList__(self.albumartist)
-        self._handle.tags['artist'] = __tryList__(self.artist)
+        self._handle.tags['albumartist'] = self.albumartist
+        self._handle.tags['artist'] = self.artist
         self._handle.tags['copyright'] = __tryStr__(self.copyright)
         self._handle.tags['tracknumber'] = str(self.tracknumber)
         self._handle.tags['tracktotal'] = str(self.totaltrack)
